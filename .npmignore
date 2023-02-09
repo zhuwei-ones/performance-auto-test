@@ -1,0 +1,15 @@
+__tests__
+.github
+.husky
+.vscode
+babel.config.json
+.eslintrc.js
+demo
+coverage
+CHANGELOG.md
+build
+*.log
+*.cache
+src
+example
+DEV.md
