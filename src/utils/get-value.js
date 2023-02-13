@@ -6,12 +6,9 @@ import { resolve } from 'path';
 import { parse } from 'url';
 import {
   CWD,
-  DEFAULT_LIGHTHOUSE_REPORT_DIR,
-  DEFAULT_SITESPEED_REPORT_DIR,
   METRICS_LIGHTHOUSE_MAP,
   METRICS_SITESPEED_MAP,
-  SITESPEED_JSON_RESULT_DIR,
-  SITESPEED_DEFAULT_OPTIONS
+  SITESPEED_JSON_RESULT_DIR
 } from '../const';
 
 export function getAbsolutePath(_path) {
@@ -118,14 +115,11 @@ export function getKeypathFromUrl(url, includeQueryParams, useHash, group) {
 
   const keys = [toSafeKey(group || newUrl.hostname), path];
 
-  return joinNonEmpty(keys, '.');
+  return joinNonEmpty(keys, '_');
 }
 
 export function getSitespeedCommand(url, options) {
-  const currentOptions = json2CliOptions({
-    ...SITESPEED_DEFAULT_OPTIONS,
-    ...options
-  }).join(' ');
+  const currentOptions = json2CliOptions(options).join(' ');
 
   console.log('sitespeed options-->', currentOptions);
 

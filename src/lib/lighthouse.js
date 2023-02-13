@@ -1,6 +1,6 @@
 const chromeLauncher = require('chrome-launcher');
 import lighthouse from 'lighthouse';
-import { LIGHTHOUSE_CONFIG, LIGHTHOUSE_DEFAULT_OPTIONS } from '../const';
+import { LIGHTHOUSE_DEFAULT_OPTIONS } from '../const';
 import {
   getKeypathFromUrl, getLighthouseReportPath, getLighthouseWebVitals
 } from '../utils';
@@ -28,7 +28,9 @@ const launchChromeAndRunLighthouse = async (url, options, config) => {
 };
 
 export async function runLighthouse(options) {
-  const { urls, iterations, outputPath } = options;
+  const {
+    urls, iterations, outputPath, lighthouseConfig
+  } = options;
 
   const runUrllist = urls.map(url=>{
     return new Array(iterations).fill(url);
@@ -40,7 +42,7 @@ export async function runLighthouse(options) {
       const runnerResult = await launchChromeAndRunLighthouse(
         url,
         null,
-        LIGHTHOUSE_CONFIG
+        lighthouseConfig
       );
 
       const preUrlResult = preResult[urlKey] || [];

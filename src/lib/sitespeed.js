@@ -7,7 +7,9 @@ import {
 } from '../utils';
 
 export async function runSitespeed(options) {
-  const { urls, iterations, outputPath } = options;
+  const {
+    urls, outputPath, sitespeedConfig
+  } = options;
 
   const testResultList = await waterfall(urls.map(url=>{
     return async (preResult = {})=>{
@@ -17,7 +19,7 @@ export async function runSitespeed(options) {
       return new Promise((res)=>{
         shelljs.exec(
           getSitespeedCommand(url, {
-            'browsertime.iterations': iterations,
+            ...sitespeedConfig,
             outputFolder: currentOutputPath
           })
         );

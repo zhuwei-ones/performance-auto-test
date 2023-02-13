@@ -75,7 +75,7 @@ export const COMMON_TEST_CONFIG = {
   USER_AGENT: USER_AGENTS.DESKTOP
 };
 
-export const LIGHTHOUSE_CONFIG = {
+export const LIGHTHOUSE_DEFAULT_CONFIG = {
   extends: 'lighthouse:default',
   settings: {
     onlyCategories: ['performance'],
@@ -115,12 +115,6 @@ export const SITESPEED_DEFAULT_OPTIONS = {
   'browsertime.headless': true,
   browser: 'chrome',
   silent: true,
-  'browsertime.connectivity.profile': 'custom',
-  'browsertime.connectivity.downstreamKbps': COMMON_TEST_CONFIG.DOWNLOAD_KBPS,
-  'browsertime.connectivity.upstreamKbps': COMMON_TEST_CONFIG.UPLOAD_KBPS,
-  'browsertime.connectivity.latency': `'${COMMON_TEST_CONFIG.LATENCY}'`,
-  'browsertime.userAgent': `'${COMMON_TEST_CONFIG.USER_AGENT}'`,
-  'browsertime.viewPort': `${COMMON_TEST_CONFIG.SCREEN_PC_WIDTH}x${COMMON_TEST_CONFIG.SCREEN_PC_HEIGHT}`,
   requestheader: (()=>{
     return Object.keys(HEADERS).map(headerName=>{
       return `${headerName.toLowerCase()}:'${HEADERS[headerName]}'`;

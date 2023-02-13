@@ -1,7 +1,9 @@
 import Joi from 'joi';
 import {
   COMMON_TEST_CONFIG, DEFAULT_LIGHTHOUSE_REPORT_DIR,
-  DEFAULT_REPORT_DIR, DEFAULT_SITESPEED_REPORT_DIR, PERFORMANCE_TOOLS_MAP
+  DEFAULT_REPORT_DIR,
+  DEFAULT_SITESPEED_REPORT_DIR, LIGHTHOUSE_DEFAULT_CONFIG,
+  PERFORMANCE_TOOLS_MAP, SITESPEED_DEFAULT_OPTIONS
 } from '../const';
 import { getAbsolutePath } from './get-value';
 
@@ -24,22 +26,59 @@ export function verifyOptions(options = {}) {
 }
 
 export function getLighthouseOptions(optoins = {}) {
-  const { urls, iterations, outputPath } = optoins;
+  const {
+    urls, iterations, outputPath, setting, lighthouseConfig = {}
+  } = optoins;
 
   return {
     urls: urls,
     iterations,
-    outputPath: `${outputPath}/${DEFAULT_LIGHTHOUSE_REPORT_DIR}`
+    outputPath: `${outputPath}/${DEFAULT_LIGHTHOUSE_REPORT_DIR}`,
+    lighthouseConfig: {
+      ...LIGHTHOUSE_DEFAULT_CONFIG,
+      ...lighthouseConfig,
+      throttling: { // constants.throttling.desktopDense4G,
+        ...LIGHTHOUSE_DEFAULT_CONFIG.settings.throttling,
+        ...(lighthouseConfig?.settings?.throttling || {}),
+        requestLatencyMs: setting.latency, // 0 means unset
+        downloadThroughputKbps: setting.downloadKbps,
+        uploadThroughputKbps: setting.uploadKbps
+      },
+      screenEmulation: {
+        ...LIGHTHOUSE_DEFAULT_CONFIG.settings.screenEmulation,
+        ...(lighthouseConfig?.settings?.screenEmulation || {}),
+
+        // setting 的权重比 lighthouseConf 大
+        width: setting.width,
+        height: setting.height
+      },
+      emulatedUserAgent: setting.userAgent
+        || lighthouseConfig.settings.userAgent
+        || LIGHTHOUSE_DEFAULT_CONFIG.settings.emulatedUserAgent
+    }
   };
 }
 
 export function getSitespeedOptions(optoins = {}) {
-  const { urls, iterations, outputPath } = optoins;
+  const {
+    urls, iterations, outputPath, setting, sitespeedConfig = {}
+  } = optoins;
 
   return {
     urls: urls,
     iterations,
-    outputPath: `${outputPath}/${DEFAULT_SITESPEED_REPORT_DIR}`
+    outputPath: `${outputPath}/${DEFAULT_SITESPEED_REPORT_DIR}`,
+    sitespeedConfig: {
+      ...SITESPEED_DEFAULT_OPTIONS,
+      ...sitespeedConfig,
+      'browsertime.iterations': iterations,
+      'browsertime.connectivity.profile': 'custom',
+      'browsertime.connectivity.downstreamKbps': setting.downloadKbps,
+      'browsertime.connectivity.upstreamKbps': setting.uploadKbps,
+      'browsertime.connectivity.latency': `'${setting.latency}'`,
+      'browsertime.userAgent': `'${setting.userAgent}'`,
+      'browsertime.viewPort': `${setting.width}x${setting.height}`
+    }
   };
 }
 
@@ -59,11 +98,21 @@ export function getDefaultOptions(options) {
   const testTime = new Date();
 
   return {
-    ...options,
-    testTime: testTime,
-    testTools: `${PERFORMANCE_TOOLS_MAP.LIGHTHOUSE} + ${PERFORMANCE_TOOLS_MAP.SITESPEED}`,
     iterations: iterations || 3,
-    outputPath: getOutputPath(outputPath, testTime)
+    outputPath: getOutputPath(outputPath, testTime),
+    ...options,
+    setting: {
+      ...options.setting,
+      userAgent: COMMON_TEST_CONFIG.USER_AGENT,
+      downloadKbps: COMMON_TEST_CONFIG.DOWNLOAD_KBPS,
+      uploadKbps: COMMON_TEST_CONFIG.UPLOAD_KBPS,
+      width: COMMON_TEST_CONFIG.SCREEN_PC_WIDTH,
+      height: COMMON_TEST_CONFIG.SCREEN_PC_HEIGHT,
+      latency: COMMON_TEST_CONFIG.LATENCY
+    },
+    testTime: testTime,
+    testTools: `${PERFORMANCE_TOOLS_MAP.LIGHTHOUSE} + ${PERFORMANCE_TOOLS_MAP.SITESPEED}`
+
   };
 }
 
@@ -77,15 +126,6 @@ export function getAllOptionsWithDefaultValue(options = {}) {
   return {
     ...currentOptions,
     lighthouseOptions,
-    sitespeedOptions,
-    setting: {
-      userAgent: COMMON_TEST_CONFIG.USER_AGENT,
-      downloadKbps: COMMON_TEST_CONFIG.DOWNLOAD_KBPS,
-      uploadKbps: COMMON_TEST_CONFIG.UPLOAD_KBPS,
-      width: COMMON_TEST_CONFIG.SCREEN_PC_WIDTH,
-      height: COMMON_TEST_CONFIG.SCREEN_PC_HEIGHT,
-      latency: COMMON_TEST_CONFIG.LATENCY,
-      ...currentOptions.setting
-    }
+    sitespeedOptions
   };
 }
