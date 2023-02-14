@@ -48,9 +48,14 @@ export function getRelativePath(path) {
 
 // dir/time/tool-name/
 export function getLighthouseReportPath(parentPath, name, index) {
-  const file = `${parentPath}/${name}/${index}.html`;
-  ensureFileSync(file);
-  return file;
+  const htmlFile = `${parentPath}/${name}/${index}.html`;
+  const jsonFile = `${parentPath}/${name}/${index}.json`;
+  ensureFileSync(jsonFile);
+  ensureFileSync(htmlFile);
+  return {
+    htmlFilePath: htmlFile,
+    jsonFilePath: jsonFile
+  };
 }
 export function getSitespeedReportPath(parentPath, name) {
   const dir = `${parentPath}/${name}`;
