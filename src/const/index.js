@@ -94,7 +94,7 @@ export const LIGHTHOUSE_DEFAULT_CONFIG = {
     maxWaitForFcp: 15 * 1000,
     maxWaitForLoad: 35 * 1000,
     throttling: { // constants.throttling.desktopDense4G,
-      rttMs: 40,
+      rttMs: COMMON_TEST_CONFIG.LATENCY, // Round-Trip Time，往返时延，从发送端发送数据开始，到发送端收到来自接收端的确认
       throughputKbps: KBPS.TEN_M,
       cpuSlowdownMultiplier: 4,
       requestLatencyMs: COMMON_TEST_CONFIG.LATENCY, // 0 means unset
