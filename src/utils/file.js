@@ -4,7 +4,7 @@ export async function createLighthouseReport(lighthouseResultList, { getReportOu
   // runnerResult.lhr.categories.performance.score * 100
 
   return Promise.all(Object.keys(lighthouseResultList).map(key=>{
-    const resultList = lighthouseResultList[key];
+    const resultList = lighthouseResultList[key]?.resultList;
 
     return resultList.map((result, index)=>{
       const reportHtml = result.report;

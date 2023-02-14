@@ -137,14 +137,16 @@ export function getLighthouseWebVitals(lighthouseResultList) {
   return allUrls
     .reduce((pre, key)=>{
       // 每个url的数组
-      const resultList = lighthouseResultList[key];
+
+      const result = lighthouseResultList[key];
+      const resultList = result?.resultList || [];
       const urlMetrics = pre;
       const iterations = resultList.length;
 
       const currentUrlMetircs = resultList
         // 性能结果对象数组 精简成 6大性能指标数组
-        .map((result)=>{
-          const audits = result.lhr.audits;
+        .map((re)=>{
+          const audits = re.lhr.audits;
 
           // console.log('audits', audits);
 
@@ -154,7 +156,7 @@ export function getLighthouseWebVitals(lighthouseResultList) {
               const name = METRICS_LIGHTHOUSE_MAP[metricsKey];
               return {
                 ...preValue,
-                [metricsKey]: +audits[name].numericValue.toFixed(2)
+                [metricsKey]: +audits[name].numericValue.toFixed(3)
               };
             }, {});
         })
@@ -170,10 +172,13 @@ export function getLighthouseWebVitals(lighthouseResultList) {
 
       // 单个url 测试的指标取平均值
       forEach(currentUrlMetircs, (value, metircsKey)=>{
-        currentUrlMetircs[metircsKey] = (value / iterations).toFixed(2);
+        currentUrlMetircs[metircsKey] = (value / iterations).toFixed(3);
       });
 
-      urlMetrics[key] = currentUrlMetircs;
+      urlMetrics[key] = {
+        url: result.url,
+        metircs: currentUrlMetircs
+      };
 
       return urlMetrics;
     }, {});
@@ -196,7 +201,8 @@ export function getSitespeedWebVitals(sitespeedResultList) {
 
   return allUrls
     .reduce((pre, url)=>{
-      const resultList = sitespeedResultList[url];
+      const result = sitespeedResultList[url];
+      const resultList = result?.resultList || [];
       const googleWebVitals = resultList?.[0].googleWebVitals;
       const urlMetrics = pre;
 
@@ -208,7 +214,10 @@ export function getSitespeedWebVitals(sitespeedResultList) {
         };
       }, {});
 
-      urlMetrics[url] = currentUrlMetircs;
+      urlMetrics[url] = {
+        url: result.url,
+        metircs: currentUrlMetircs
+      };
 
       return urlMetrics;
     }, {});

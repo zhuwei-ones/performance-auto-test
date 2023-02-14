@@ -3,7 +3,9 @@ import json2md from 'json2md';
 import { marked } from 'marked';
 import glob from 'glob';
 import { basename } from 'path';
-import { KBPS_NAME, METRICS_REPORT_MAP, PERFORMANCE_TOOLS_MAP } from '../const';
+import {
+  KBPS_NAME, METRICS_REPORT_MAP, METRICS_SECOND_UNIT, PERFORMANCE_TOOLS_MAP
+} from '../const';
 
 const getHtmlResult = ({ bodyStr, title }) => {
   return `
@@ -45,11 +47,13 @@ export const getToolCompareTableData = (lighthouseResult, sitespeedResult)=>{
   const allUrls = Object.keys(lighthouseResult);
   const allTools = Object.keys(data);
 
-  allUrls.forEach(url=>{
+  allUrls.forEach(urlKey=>{
+    const urlData = lighthouseResult[urlKey];
+
     allTools.forEach((tool, index)=>{
       const obj = [];
       if (index === 0) {
-        obj.push(url);
+        obj.push(urlData.url);
       } else {
         obj.push('-');
       }
@@ -57,15 +61,20 @@ export const getToolCompareTableData = (lighthouseResult, sitespeedResult)=>{
       obj.push(tool);
 
       METRICS_REPORT_MAP.forEach(metricsKey=>{
-        let val = data[tool][url][metricsKey];
+        const pageData = data[tool][urlKey];
+        let pageMetrics = pageData?.metircs?.[metricsKey];
 
-        if (val) {
-          val = `${(val / 1000).toFixed(2)} s`;
+        if (pageMetrics) {
+          // 如果不是 s 单位的，就需要除1000
+          if (!METRICS_SECOND_UNIT.includes(metricsKey)) {
+            pageMetrics = (pageMetrics / 1000).toFixed(3);
+          }
+          pageMetrics = `${pageMetrics} s`;
         } else {
-          val = '-';
+          pageMetrics = '-';
         }
 
-        obj.push(val);
+        obj.push(pageMetrics);
       });
       content.push(obj);
     });
@@ -73,13 +82,13 @@ export const getToolCompareTableData = (lighthouseResult, sitespeedResult)=>{
 
   return {
     table: {
-      headers: ['', '', ...METRICS_REPORT_MAP],
+      headers: ['Page', 'Tool', ...METRICS_REPORT_MAP],
       rows: content
     }
   };
 };
 
-export const getLighthouseReportLinks = ({ lighthouseOutputPath, outputPath })=>{
+export const getLighthouseReportLinks = ({ lighthouseOutputPath, outputPath, lighthouseResult })=>{
   const reportUrls = {};
   const urlDirs = glob.sync(`${lighthouseOutputPath}/*`);
 
@@ -97,10 +106,10 @@ export const getLighthouseReportLinks = ({ lighthouseOutputPath, outputPath })=>
     });
   });
 
-  const content = Object.keys(reportUrls).map(url=>{
-    const reportUrl = reportUrls[url] || [];
+  const content = Object.keys(reportUrls).map(urlKey=>{
+    const reportUrl = reportUrls[urlKey] || [];
     return [
-      url,
+      lighthouseResult[urlKey]?.url,
       ...reportUrl
     ];
   });
@@ -112,7 +121,7 @@ export const getLighthouseReportLinks = ({ lighthouseOutputPath, outputPath })=>
   };
 };
 
-export const getSitespeedReportLinks = ({ sitespeedOutputPath, outputPath })=>{
+export const getSitespeedReportLinks = ({ sitespeedOutputPath, outputPath, sitespeedResult })=>{
   const reportUrls = {};
   const urlDirs = glob.sync(`${sitespeedOutputPath}/*`);
 
@@ -147,15 +156,13 @@ export const getSitespeedReportLinks = ({ sitespeedOutputPath, outputPath })=>{
     ];
   });
 
-  const content = Object.keys(reportUrls).map(url=>{
-    const reportUrl = reportUrls[url] || [];
+  const content = Object.keys(reportUrls).map(urlKey=>{
+    const reportUrl = reportUrls[urlKey] || [];
     return [
-      url,
+      sitespeedResult[urlKey]?.url,
       ...reportUrl
     ];
   });
-
-  console.log("new Array(content.slice(2).length).fill('-')", content, new Array(content.slice(2).length).fill('-'));
 
   return {
     table: {

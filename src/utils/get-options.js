@@ -3,7 +3,7 @@ import {
   COMMON_TEST_CONFIG, DEFAULT_LIGHTHOUSE_REPORT_DIR,
   DEFAULT_REPORT_DIR,
   DEFAULT_SITESPEED_REPORT_DIR, LIGHTHOUSE_DEFAULT_CONFIG,
-  PERFORMANCE_TOOLS_MAP, SITESPEED_DEFAULT_OPTIONS
+  PERFORMANCE_TOOLS_MAP, SITESPEED_DEFAULT_CONFIG
 } from '../const';
 import { getAbsolutePath } from './get-value';
 
@@ -11,11 +11,8 @@ export function verifyOptions(options = {}) {
   const schema = Joi.object({
     urls: Joi.array().items(Joi.string().uri()).single()
       .required(),
-
     iterations: Joi.number(),
-
     outputPath: Joi.string()
-
   });
 
   const result = schema.validate(options);
@@ -69,7 +66,7 @@ export function getSitespeedOptions(optoins = {}) {
     iterations,
     outputPath: `${outputPath}/${DEFAULT_SITESPEED_REPORT_DIR}`,
     sitespeedConfig: {
-      ...SITESPEED_DEFAULT_OPTIONS,
+      ...SITESPEED_DEFAULT_CONFIG,
       ...sitespeedConfig,
       'browsertime.iterations': iterations,
       'browsertime.connectivity.profile': 'custom',

@@ -24,12 +24,15 @@ export async function runSitespeed(options) {
           })
         );
 
-        const preUrlResult = preResult[urlKey] || [];
+        const preUrlResult = preResult[urlKey] || {};
         const runnerResult = readSitespeedJsonReport(currentOutputPath);
 
         res({
           ...preResult,
-          [urlKey]: [...preUrlResult, runnerResult]
+          [urlKey]: {
+            url,
+            resultList: [...preUrlResult.resultList || [], runnerResult]
+          }
         });
       });
     };

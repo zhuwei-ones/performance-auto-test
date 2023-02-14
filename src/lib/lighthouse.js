@@ -45,11 +45,14 @@ export async function runLighthouse(options) {
         lighthouseConfig
       );
 
-      const preUrlResult = preResult[urlKey] || [];
+      const preUrlResult = preResult[urlKey] || {};
 
       return {
         ...preResult,
-        [urlKey]: [...preUrlResult, runnerResult]
+        [urlKey]: {
+          url: url,
+          resultList: [...preUrlResult.resultList || [], runnerResult]
+        }
       };
     };
   }));

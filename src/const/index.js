@@ -39,6 +39,10 @@ export const METRICS_REPORT_MAP = [
   'TBT'
 ];
 
+export const METRICS_SECOND_UNIT = [
+  METRICS_REPORT_MAP[2]
+];
+
 export const METRICS_LIGHTHOUSE_MAP = {
   LCP: 'largest-contentful-paint',
   FCP: 'first-contentful-paint',
@@ -75,6 +79,12 @@ export const COMMON_TEST_CONFIG = {
   USER_AGENT: USER_AGENTS.DESKTOP
 };
 
+export const LIGHTHOUSE_DEFAULT_OPTIONS = {
+  onlyCategories: ['performance'],
+  output: 'html',
+  extraHeaders: HEADERS
+};
+
 export const LIGHTHOUSE_DEFAULT_CONFIG = {
   extends: 'lighthouse:default',
   settings: {
@@ -104,13 +114,7 @@ export const LIGHTHOUSE_DEFAULT_CONFIG = {
   }
 };
 
-export const LIGHTHOUSE_DEFAULT_OPTIONS = {
-  onlyCategories: ['performance'],
-  output: 'html',
-  extraHeaders: HEADERS
-};
-
-export const SITESPEED_DEFAULT_OPTIONS = {
+export const SITESPEED_DEFAULT_CONFIG = {
   'plugins.add': 'analysisstorer',
   'browsertime.headless': true,
   browser: 'chrome',
