@@ -15,6 +15,12 @@ export const SITESPEED_JSON_RESULT_DIR = 'data/browsertime.summary-total.json';
 const MOTOG4_USERAGENT = 'Mozilla/5.0 (Linux; Android 11; moto g power (2022)) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Mobile Safari/537.36'; // eslint-disable-line max-len
 const DESKTOP_USERAGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36'; // eslint-disable-line max-len
 
+export const COLOR_MAP = {
+  RED: '#c00',
+  GREEN: '#080',
+  ORANGE: '#fa3'
+};
+
 export const PERFORMANCE_TOOLS_MAP = {
   LIGHTHOUSE: 'Lighthouse',
   SITESPEED: 'Sitespeed'
@@ -30,34 +36,69 @@ export const HEADERS = {
       'OauthUserID=605711609;OauthAccessToken=dev.myones.net60571160932529168000;OauthExpires=32529168000'
 };
 
+const METRICS_MAP = {
+  LCP: 'LCP',
+  CLS: 'CLS',
+  FID: 'FID',
+  FCP: 'FCP',
+  SI: 'SI',
+  TTI: 'TTI',
+  TBT: 'TBT',
+  TTFB: 'TTFB'
+};
+
+export const METRICS_CONFIG = {
+  GOOD: {
+    [METRICS_MAP.LCP]: 1200,
+    [METRICS_MAP.CLS]: 100,
+    [METRICS_MAP.FID]: 100
+  },
+  BAD: {
+    [METRICS_MAP.LCP]: 2500,
+    [METRICS_MAP.CLS]: 100,
+    [METRICS_MAP.FID]: 100
+  }
+};
+
+export const METRICS_STANDARD_MAP = [
+  METRICS_MAP.LCP,
+  METRICS_MAP.CLS,
+  METRICS_MAP.FID
+];
+
 export const METRICS_REPORT_MAP = [
-  'LCP',
-  'FCP',
-  'CLS',
-  'SI',
-  'TTI',
-  'TBT'
+  METRICS_MAP.LCP,
+  METRICS_MAP.CLS,
+  METRICS_MAP.FID,
+  METRICS_MAP.FCP,
+  METRICS_MAP.SI,
+  METRICS_MAP.TTI,
+  METRICS_MAP.TBT
 ];
 
 export const METRICS_SECOND_UNIT = [
-  METRICS_REPORT_MAP[2]
+  METRICS_MAP.CLS
 ];
 
 export const METRICS_LIGHTHOUSE_MAP = {
-  LCP: 'largest-contentful-paint',
-  FCP: 'first-contentful-paint',
-  CLS: 'cumulative-layout-shift',
-  SI: 'speed-index',
-  TTI: 'interactive',
-  TBT: 'total-blocking-time'
+  [METRICS_MAP.LCP]: 'largest-contentful-paint',
+  [METRICS_MAP.FCP]: 'first-contentful-paint',
+  [METRICS_MAP.CLS]: 'cumulative-layout-shift',
+  [METRICS_MAP.SI]: 'speed-index',
+  [METRICS_MAP.TTI]: 'interactive',
+  [METRICS_MAP.FID]: 'interactive',
+  [METRICS_MAP.TBT]: 'total-blocking-time',
+  [METRICS_MAP.TTFB]: 'server-response-time'
 };
 
 export const METRICS_SITESPEED_MAP = {
-  LCP: 'largestContentfulPaint',
-  FCP: 'firstContentfulPaint',
-  CLS: 'cumulativeLayoutShift',
-  TTI: 'firstInputDelay',
-  TBT: 'totalBlockingTime'
+  [METRICS_MAP.LCP]: 'largestContentfulPaint',
+  [METRICS_MAP.FCP]: 'firstContentfulPaint',
+  [METRICS_MAP.CLS]: 'cumulativeLayoutShift',
+  [METRICS_MAP.TTI]: 'firstInputDelay',
+  [METRICS_MAP.FID]: 'firstInputDelay',
+  [METRICS_MAP.TBT]: 'totalBlockingTime',
+  [METRICS_MAP.TTFB]: 'ttfb'
 };
 
 const KBPS = {

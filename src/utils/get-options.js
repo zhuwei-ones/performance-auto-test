@@ -3,6 +3,7 @@ import {
   COMMON_TEST_CONFIG, DEFAULT_LIGHTHOUSE_REPORT_DIR,
   DEFAULT_REPORT_DIR,
   DEFAULT_SITESPEED_REPORT_DIR, LIGHTHOUSE_DEFAULT_CONFIG,
+  METRICS_CONFIG,
   PERFORMANCE_TOOLS_MAP, SITESPEED_DEFAULT_CONFIG
 } from '../const';
 import { getAbsolutePath } from './get-value';
@@ -89,7 +90,8 @@ export function getOutputPath(outputPath, testTime = new Date()) {
 export function getDefaultOptions(options) {
   const {
     iterations,
-    outputPath
+    outputPath,
+    metricsConfig = {}
   } = options;
 
   const testTime = new Date();
@@ -98,6 +100,20 @@ export function getDefaultOptions(options) {
     iterations: iterations || 3,
     outputPath: getOutputPath(outputPath, testTime),
     ...options,
+    metricsConfig: {
+      good: {
+        lcp: METRICS_CONFIG.GOOD.LCP,
+        cls: METRICS_CONFIG.GOOD.CLS,
+        fid: METRICS_CONFIG.GOOD.FID,
+        ...(metricsConfig?.good || {})
+      },
+      bad: {
+        lcp: METRICS_CONFIG.BAD.LCP,
+        cls: METRICS_CONFIG.BAD.CLS,
+        fid: METRICS_CONFIG.BAD.FID,
+        ...(metricsConfig?.bad || {})
+      }
+    },
     setting: {
       ...options.setting,
       userAgent: COMMON_TEST_CONFIG.USER_AGENT,

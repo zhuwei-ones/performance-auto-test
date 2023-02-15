@@ -2,16 +2,21 @@ const chromeLauncher = require('chrome-launcher');
 
 import { runLighthouse } from './lib/lighthouse';
 import { runSitespeed } from './lib/sitespeed';
-import { createPerformanceReport, getAllOptionsWithDefaultValue, logger } from './utils';
+import {
+  createPerformanceReport, getAllOptionsWithDefaultValue, logger, printfPerformanceTestContent
+} from './utils';
 
 async function PerformanceTest(options) {
   const currentOptions = getAllOptionsWithDefaultValue(options);
 
   const {
-    lighthouseOptions, sitespeedOptions, outputPath, setting, testTime, testTools, iterations
+    lighthouseOptions, sitespeedOptions, outputPath,
+    setting, testTime, testTools, iterations, metricsConfig
   } = currentOptions;
 
   logger.info('开始性能测试');
+
+  printfPerformanceTestContent();
 
   const lighthouseResult = await runLighthouse(lighthouseOptions);
 
@@ -33,7 +38,8 @@ async function PerformanceTest(options) {
       setting,
       testTime,
       testTools,
-      iterations
+      iterations,
+      metricsConfig
     });
 
     chromeLauncher.launch({
