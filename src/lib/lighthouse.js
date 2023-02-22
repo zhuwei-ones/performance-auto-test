@@ -33,35 +33,42 @@ export async function runLighthouse(options) {
   } = options;
 
   const runUrllist = urls.map(url=>{
-    return new Array(iterations).fill(url);
+    return new Array(iterations).fill(0).map((_, index)=>({ url: url, index: index + 1 }));
   }).flat();
 
-  const testhouseResultList = await waterfall(runUrllist.map((url)=>{
+  const testhouseResultList = await waterfall(runUrllist.map(({ url, index })=>{
     return async (preResult = {})=>{
       const urlKey = getKeypathFromUrl(url);
-      const runnerResult = await launchChromeAndRunLighthouse(
+      let runnerResult = await launchChromeAndRunLighthouse(
         url,
         null,
         lighthouseConfig
       );
 
+      const audits = runnerResult.lhr.audits;
       const preUrlResult = preResult[urlKey] || {};
+
+      await createLighthouseReport({
+        url: url,
+        urlKey: urlKey,
+        index: index,
+        outputPath,
+        resultList: runnerResult
+      });
 
       return {
         ...preResult,
         [urlKey]: {
           url: url,
-          resultList: [...preUrlResult.resultList || [], runnerResult]
+          resultList: [...preUrlResult.resultList || [], {
+            lhr: {
+              audits: audits
+            }
+          }]
         }
       };
     };
   }));
-
-  await createLighthouseReport(testhouseResultList, {
-    getReportOutputPath: (pageUrl, index)=>{
-      return getLighthouseReportPath(outputPath, pageUrl, index);
-    }
-  });
 
   return getLighthouseWebVitals(testhouseResultList);
 }

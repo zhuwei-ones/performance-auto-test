@@ -1,18 +1,17 @@
 import { writeFile, writeJson } from 'fs-extra';
+import { getLighthouseReportPath } from './get-value';
 
-export async function createLighthouseReport(lighthouseResultList, { getReportOutputPath }) {
+export async function createLighthouseReport(options) {
   // runnerResult.lhr.categories.performance.score * 100
 
-  return Promise.all(Object.keys(lighthouseResultList).map(key=>{
-    const resultList = lighthouseResultList[key]?.resultList;
+  const {
+    urlKey, index, outputPath, resultList
+  } = options;
 
-    return resultList.map((result, index)=>{
-      const { report: reportHtml, ...rest } = result;
-      const { htmlFilePath, jsonFilePath } = getReportOutputPath(key, index + 1);
-      return Promise.all([
-        writeFile(htmlFilePath, reportHtml),
-        writeJson(jsonFilePath, rest, { spaces: 4 })
-      ]);
-    });
-  }).flat());
+  const { report: reportHtml, ...rest } = resultList;
+  const { htmlFilePath, jsonFilePath } = getLighthouseReportPath(outputPath, urlKey, index);
+  return Promise.all([
+    writeFile(htmlFilePath, reportHtml),
+    writeJson(jsonFilePath, rest, { spaces: 4 })
+  ]);
 }
