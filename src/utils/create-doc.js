@@ -289,7 +289,7 @@ export const getTestEnvTableData = (options)=>{
       value: testTime.toLocaleString()
     }, {
       title: '测试工具',
-      value: testTools
+      value: testTools.join('、')
     }, {
       title: '网络状态',
       value: `上传速度：${KBPS_NAME[downloadKbps]}，下载速度${KBPS_NAME[uploadKbps]}，延迟：${latency}ms`
