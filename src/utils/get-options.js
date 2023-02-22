@@ -38,9 +38,11 @@ export function getLighthouseOptions(optoins = {}) {
       throttling: { // constants.throttling.desktopDense4G,
         ...LIGHTHOUSE_DEFAULT_CONFIG.settings.throttling,
         ...(lighthouseConfig?.settings?.throttling || {}),
+        rttMs: setting.latency, // Round-Trip Time，往返时延，从发送端发送数据开始，到发送端收到来自接收端的确认
         requestLatencyMs: setting.latency, // 0 means unset
         downloadThroughputKbps: setting.downloadKbps,
-        uploadThroughputKbps: setting.uploadKbps
+        uploadThroughputKbps: setting.uploadKbps,
+        cpuSlowdownMultiplier: setting.cpuSlowdown
       },
       screenEmulation: {
         ...LIGHTHOUSE_DEFAULT_CONFIG.settings.screenEmulation,
@@ -69,6 +71,7 @@ export function getSitespeedOptions(optoins = {}) {
     sitespeedConfig: {
       ...SITESPEED_DEFAULT_CONFIG,
       ...sitespeedConfig,
+      'chrome.CPUThrottlingRate': setting.cpuSlowdown,
       'browsertime.iterations': iterations,
       'browsertime.connectivity.profile': 'custom',
       'browsertime.connectivity.downstreamKbps': setting.downloadKbps,
@@ -115,16 +118,20 @@ export function getDefaultOptions(options) {
       }
     },
     setting: {
-      ...options.setting,
       userAgent: COMMON_TEST_CONFIG.USER_AGENT,
       downloadKbps: COMMON_TEST_CONFIG.DOWNLOAD_KBPS,
       uploadKbps: COMMON_TEST_CONFIG.UPLOAD_KBPS,
       width: COMMON_TEST_CONFIG.SCREEN_PC_WIDTH,
       height: COMMON_TEST_CONFIG.SCREEN_PC_HEIGHT,
-      latency: COMMON_TEST_CONFIG.LATENCY
+      latency: COMMON_TEST_CONFIG.LATENCY,
+      cpuSlowdown: COMMON_TEST_CONFIG.CPU_SLOWDOWN,
+      ...options.setting
     },
     testTime: testTime,
-    testTools: `${PERFORMANCE_TOOLS_MAP.LIGHTHOUSE} + ${PERFORMANCE_TOOLS_MAP.SITESPEED}`
+    testTools: [
+      PERFORMANCE_TOOLS_MAP.LIGHTHOUSE,
+      PERFORMANCE_TOOLS_MAP.SITESPEED
+    ]
 
   };
 }

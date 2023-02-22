@@ -117,7 +117,8 @@ export const COMMON_TEST_CONFIG = {
   LATENCY: 0,
   SCREEN_PC_WIDTH: 1920,
   SCREEN_PC_HEIGHT: 1080,
-  USER_AGENT: USER_AGENTS.DESKTOP
+  USER_AGENT: USER_AGENTS.DESKTOP,
+  CPU_SLOWDOWN: 1
 };
 
 export const LIGHTHOUSE_DEFAULT_OPTIONS = {
@@ -137,7 +138,7 @@ export const LIGHTHOUSE_DEFAULT_CONFIG = {
     throttling: { // constants.throttling.desktopDense4G,
       rttMs: COMMON_TEST_CONFIG.LATENCY, // Round-Trip Time，往返时延，从发送端发送数据开始，到发送端收到来自接收端的确认
       throughputKbps: KBPS.TEN_M,
-      cpuSlowdownMultiplier: 4,
+      cpuSlowdownMultiplier: COMMON_TEST_CONFIG.CPU_SLOWDOWN,
       requestLatencyMs: COMMON_TEST_CONFIG.LATENCY, // 0 means unset
       downloadThroughputKbps: COMMON_TEST_CONFIG.DOWNLOAD_KBPS,
       uploadThroughputKbps: COMMON_TEST_CONFIG.UPLOAD_KBPS
