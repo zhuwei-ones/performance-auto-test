@@ -129,11 +129,11 @@ export function getSitespeedCommand(url, options) {
   console.log('sitespeed options-->', currentOptions);
 
   return `
-    sudo npx sitespeed.io ${url} ${currentOptions}  
+    npx sitespeed.io ${url} ${currentOptions}  
   `;
 }
 
-export function getLighthouseWebVitals(lighthouseResultList) {
+export function getLighthouseWebVitals(lighthouseResultList = []) {
   const metricsList = Object.keys(METRICS_LIGHTHOUSE_MAP);
   const allUrls = Object.keys(lighthouseResultList);
 
