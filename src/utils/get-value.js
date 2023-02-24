@@ -151,7 +151,7 @@ export function getLighthouseWebVitals(lighthouseResultList = []) {
       const currentUrlMetircs = resultList
         // 性能结果对象数组 精简成 6大性能指标数组
         .map((re)=>{
-          const audits = re.lhr.audits;
+          const audits = re;
 
           // console.log('audits', audits);
 
@@ -203,6 +203,8 @@ export function readSitespeedJsonReport(dir) {
 export function getSitespeedWebVitals(sitespeedResultList) {
   const metricsList = Object.keys(METRICS_SITESPEED_MAP);
   const allUrls = Object.keys(sitespeedResultList);
+
+  console.log('sitespeedResultList', sitespeedResultList);
 
   return allUrls
     .reduce((pre, url)=>{

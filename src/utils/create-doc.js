@@ -45,30 +45,26 @@ const getHtmlResult = ({ bodyStr, title }) => {
     `;
 };
 
-export const getReportConclusion = ({ lighthouseResult, sitespeedResult, metricsConfig })=>{
+export const getReportConclusion = ({ performanceResultList, metricsConfig })=>{
   // 总的是否通过
   // 链接表格 具体那个不通过
   const content = [];
-
-  const data = {
-    [PERFORMANCE_TOOLS_MAP.LIGHTHOUSE]: lighthouseResult,
-    [PERFORMANCE_TOOLS_MAP.SITESPEED]: sitespeedResult
-  };
-
   const { good: goodMetrics } = metricsConfig;
 
-  const allUrls = Object.keys(lighthouseResult);
-  const allTools = Object.keys(data);
+  const allTools = Object.keys(performanceResultList);
+  const oneToolName = allTools[0];
+  const oneTool = performanceResultList[oneToolName];
+  const allUrls = Object.keys(oneTool);
 
   allUrls.forEach(urlKey=>{
-    const urlData = lighthouseResult[urlKey];
+    const urlData = oneTool[urlKey];
     const obj = [];
 
     obj.push(urlData.url);
 
     allTools.forEach((tool)=>{
       const isUnApprove = METRICS_STANDARD_MAP.some(metricsKey=>{
-        const pageData = data[tool][urlKey];
+        const pageData = performanceResultList[tool][urlKey];
         let pageMetrics = pageData?.metircs?.[metricsKey];
         const metricsLowerKey = metricsKey.toLowerCase();
         const goodMetricsVal = goodMetrics[metricsLowerKey];
@@ -100,23 +96,20 @@ export const getReportConclusion = ({ lighthouseResult, sitespeedResult, metrics
   ];
 };
 
-export const getToolCompareTableData = ({ lighthouseResult, sitespeedResult, metricsConfig })=>{
+export const getToolCompareTableData = ({ performanceResultList, metricsConfig })=>{
   const content = [];
-
-  const data = {
-    [PERFORMANCE_TOOLS_MAP.LIGHTHOUSE]: lighthouseResult,
-    [PERFORMANCE_TOOLS_MAP.SITESPEED]: sitespeedResult
-  };
 
   const { good: goodMetrics, bad: badMetrics } = metricsConfig;
 
-  console.log('performance data--->', data);
+  console.log('performance data--->', performanceResultList);
 
-  const allUrls = Object.keys(lighthouseResult);
-  const allTools = Object.keys(data);
+  const allTools = Object.keys(performanceResultList);
+  const oneToolName = allTools[0];
+  const oneTool = performanceResultList[oneToolName];
+  const allUrls = Object.keys(oneTool);
 
   allUrls.forEach(urlKey=>{
-    const urlData = lighthouseResult[urlKey];
+    const urlData = oneTool[urlKey];
 
     allTools.forEach((tool, index)=>{
       const obj = [];
@@ -129,7 +122,7 @@ export const getToolCompareTableData = ({ lighthouseResult, sitespeedResult, met
       obj.push(tool);
 
       METRICS_REPORT_MAP.forEach(metricsKey=>{
-        const pageData = data[tool][urlKey];
+        const pageData = performanceResultList[tool][urlKey];
         let pageMetrics = pageData?.metircs?.[metricsKey];
         const metricsLowerKey = metricsKey.toLowerCase();
         const goodMetricsVal = goodMetrics[metricsLowerKey];
@@ -194,9 +187,9 @@ export const getMetricsStandardDataTable = (metricsConfig)=>{
   };
 };
 
-export const getLighthouseReportLinks = ({ lighthouseOutputPath, outputPath, lighthouseResult })=>{
+export const getLighthouseReportLinks = ({ toolOutputPath, outputPath, result })=>{
   const reportUrls = {};
-  const urlDirs = glob.sync(`${lighthouseOutputPath}/*`);
+  const urlDirs = glob.sync(`${toolOutputPath}/*`);
 
   urlDirs.forEach(dir=>{
     const htmlList = glob.sync(`${dir}/*.html`);
@@ -215,7 +208,7 @@ export const getLighthouseReportLinks = ({ lighthouseOutputPath, outputPath, lig
   const content = Object.keys(reportUrls).map(urlKey=>{
     const reportUrl = reportUrls[urlKey] || [];
     return [
-      lighthouseResult[urlKey]?.url,
+      result[urlKey]?.url,
       ...reportUrl
     ];
   });
@@ -227,9 +220,9 @@ export const getLighthouseReportLinks = ({ lighthouseOutputPath, outputPath, lig
   };
 };
 
-export const getSitespeedReportLinks = ({ sitespeedOutputPath, outputPath, sitespeedResult })=>{
+export const getSitespeedReportLinks = ({ toolOutputPath, outputPath, result })=>{
   const reportUrls = {};
-  const urlDirs = glob.sync(`${sitespeedOutputPath}/*`);
+  const urlDirs = glob.sync(`${toolOutputPath}/*`);
 
   urlDirs.forEach(dir=>{
     const htmlList = glob.sync(`${dir}/pages/**/*.html`);
@@ -265,7 +258,7 @@ export const getSitespeedReportLinks = ({ sitespeedOutputPath, outputPath, sites
   const content = Object.keys(reportUrls).map(urlKey=>{
     const reportUrl = reportUrls[urlKey] || [];
     return [
-      sitespeedResult[urlKey]?.url,
+      result[urlKey]?.url,
       ...reportUrl
     ];
   });
@@ -323,22 +316,35 @@ export const getTestEnvTableData = (options)=>{
   };
 };
 
-export const createPerformanceReport = (params)=>{
+const TOOL_REPORT_LINK_FUNC_MAP = {
+  [PERFORMANCE_TOOLS_MAP.LIGHTHOUSE]: getLighthouseReportLinks,
+  [PERFORMANCE_TOOLS_MAP.SITESPEED]: getSitespeedReportLinks
+};
+
+export const createPerformanceReport = (performanceResultList, options)=>{
   const {
-    lighthouseResult,
-    lighthouseOptions,
-    sitespeedOptions,
-    sitespeedResult,
     outputPath,
     metricsConfig,
     setting, testTime, testTools, iterations
-  } = params;
+  } = options;
 
   const json = [];
 
+  console.log('performanceResultList--->', performanceResultList);
+
+  const performanceResultMap = performanceResultList.reduce((pre, current)=>{
+    return {
+      ...pre,
+      [current.type]: current.result
+    };
+  }, {});
+
   json.push({ h1: '性能测试报告' });
 
-  json.push(getReportConclusion({ lighthouseResult, sitespeedResult, metricsConfig }));
+  json.push(getReportConclusion({
+    performanceResultList: performanceResultMap,
+    metricsConfig
+  }));
 
   json.push({ h3: '测试环境' });
   json.push(getTestEnvTableData({
@@ -349,21 +355,22 @@ export const createPerformanceReport = (params)=>{
   json.push(getMetricsStandardDataTable(metricsConfig));
 
   json.push({ h3: '性能测试工具结果对比报告' });
-  json.push(getToolCompareTableData({ lighthouseResult, sitespeedResult, metricsConfig }));
-
-  json.push({ h3: 'Lighthouse 具体报告' });
-  json.push(getLighthouseReportLinks({
-    lighthouseOutputPath: lighthouseOptions.outputPath,
-    outputPath,
-    lighthouseResult
+  json.push(getToolCompareTableData({
+    performanceResultList: performanceResultMap,
+    metricsConfig
   }));
 
-  json.push({ h3: 'Sitespeed 具体报告' });
-  json.push(getSitespeedReportLinks({
-    sitespeedOutputPath: sitespeedOptions.outputPath,
-    outputPath,
-    sitespeedResult
-  }));
+  performanceResultList.forEach((item)=>{
+    const { type, result } = item;
+    const getToolReportLinkFunc = TOOL_REPORT_LINK_FUNC_MAP[type];
+
+    json.push({ h3: `${type} 具体报告` });
+    json.push(getToolReportLinkFunc({
+      toolOutputPath: options[`${type}Options`].outputPath,
+      outputPath,
+      result
+    }));
+  });
 
   console.log('md json--->', JSON.stringify(json, null, { space: 4 }));
 

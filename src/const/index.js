@@ -22,9 +22,11 @@ export const COLOR_MAP = {
 };
 
 export const PERFORMANCE_TOOLS_MAP = {
-  LIGHTHOUSE: 'Lighthouse',
-  SITESPEED: 'Sitespeed'
+  LIGHTHOUSE: 'lighthouse',
+  SITESPEED: 'sitespeed'
 };
+
+export const PERFORMANCE_TOOLS_LIST = Object.values(PERFORMANCE_TOOLS_MAP);
 
 export const USER_AGENTS = {
   MOBILE: MOTOG4_USERAGENT,

@@ -4,9 +4,10 @@ import {
   DEFAULT_REPORT_DIR,
   DEFAULT_SITESPEED_REPORT_DIR, LIGHTHOUSE_DEFAULT_CONFIG,
   METRICS_CONFIG,
+  PERFORMANCE_TOOLS_LIST,
   PERFORMANCE_TOOLS_MAP, SITESPEED_DEFAULT_CONFIG
 } from '../const';
-import { getAbsolutePath } from './get-value';
+import { getAbsolutePath, getKeypathFromUrl } from './get-value';
 
 export function verifyOptions(options = {}) {
   const schema = Joi.object({
@@ -29,7 +30,10 @@ export function getLighthouseOptions(optoins = {}) {
   } = optoins;
 
   return {
-    urls: urls,
+    urls: urls.map(url=>{
+      return new Array(iterations).fill(0)
+        .map((_, index)=>({ url, index, urlKey: getKeypathFromUrl(url) }));
+    }).flat(),
     iterations,
     outputPath: `${outputPath}/${DEFAULT_LIGHTHOUSE_REPORT_DIR}`,
     lighthouseConfig: {
@@ -65,7 +69,7 @@ export function getSitespeedOptions(optoins = {}) {
   } = optoins;
 
   return {
-    urls: urls,
+    urls: urls.map((url, index)=>({ url, index, urlKey: getKeypathFromUrl(url) })),
     iterations,
     outputPath: `${outputPath}/${DEFAULT_SITESPEED_REPORT_DIR}`,
     sitespeedConfig: {
@@ -131,21 +135,28 @@ export function getDefaultOptions(options) {
     testTools: [
       PERFORMANCE_TOOLS_MAP.LIGHTHOUSE,
       PERFORMANCE_TOOLS_MAP.SITESPEED
-    ]
+    ],
+    [PERFORMANCE_TOOLS_MAP.LIGHTHOUSE]: options[PERFORMANCE_TOOLS_MAP.LIGHTHOUSE] ?? true,
+    [PERFORMANCE_TOOLS_MAP.SITESPEED]: options[PERFORMANCE_TOOLS_MAP.SITESPEED] ?? true
 
   };
 }
+
+const GET_TOOL_OPTIONS_MAP = {
+  [PERFORMANCE_TOOLS_MAP.LIGHTHOUSE]: getLighthouseOptions,
+  [PERFORMANCE_TOOLS_MAP.SITESPEED]: getSitespeedOptions
+};
 
 export function getAllOptionsWithDefaultValue(options = {}) {
   verifyOptions(options);
 
   const currentOptions = getDefaultOptions(options);
-  const lighthouseOptions = getLighthouseOptions(currentOptions);
-  const sitespeedOptions = getSitespeedOptions(currentOptions);
 
-  return {
-    ...currentOptions,
-    lighthouseOptions,
-    sitespeedOptions
-  };
+  PERFORMANCE_TOOLS_LIST.forEach((toolName) => {
+    if (currentOptions[toolName]) {
+      currentOptions[`${toolName}Options`] = GET_TOOL_OPTIONS_MAP[toolName](currentOptions);
+    }
+  });
+
+  return currentOptions;
 }

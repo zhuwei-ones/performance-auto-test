@@ -1,51 +1,48 @@
 const chromeLauncher = require('chrome-launcher');
 
-import { runLighthouse } from './lib/lighthouse';
-import { runSitespeed } from './lib/sitespeed';
+import ProgressBar from 'progress';
 import {
   createPerformanceReport, getAllOptionsWithDefaultValue, logger, printfPerformanceTestContent
 } from './utils';
+import { getTaskList, runTasks } from './utils/task';
 
 async function PerformanceTest(options) {
   const currentOptions = getAllOptionsWithDefaultValue(options);
-
-  const {
-    lighthouseOptions, sitespeedOptions, outputPath,
-    setting, testTime, testTools, iterations, metricsConfig
-  } = currentOptions;
+  const { urls, iterations } = currentOptions;
+  const bar = new ProgressBar('Website Performance Test [:bar] :percent :elapseds', {
+    complete: '=',
+    incomplete: ' ',
+    width: 40,
+    total: urls.length * iterations * 2
+  });
 
   logger.info('开始性能测试');
 
   printfPerformanceTestContent();
 
-  const lighthouseResult = await runLighthouse(lighthouseOptions);
+  const taskList = getTaskList(currentOptions);
 
-  logger.success('lighthouse性能测试 完成');
-
-  const sitespeedResult = await runSitespeed(sitespeedOptions);
-
-  logger.success('sitespeed性能测试 完成');
+  // [{type,result}]
+  const taskResultList = await runTasks(taskList, {
+    onBegin: () => {
+      logger.info(`开始 ${1} 能测试`);
+    },
+    onDone: () => {
+      bar.tick(1);
+    },
+    onAllDone: () => {
+      logger.success(`${1} 性能测试 完成`);
+    }
+  });
 
   try {
     logger.info('正在输出性能报告');
 
-    const reportPath = await createPerformanceReport({
-      lighthouseOptions,
-      sitespeedOptions,
-      lighthouseResult,
-      sitespeedResult,
-      outputPath,
-      setting,
-      testTime,
-      testTools,
-      iterations,
-      metricsConfig
-    });
+    const reportPath = await createPerformanceReport(taskResultList, currentOptions);
 
-    chromeLauncher.launch({
+    await chromeLauncher.launch({
       startingUrl: `file://${reportPath}`
     });
-
     logger.success('性能报告输出成功');
   } catch (error) {
     logger.error('性能报告输出失败', error);

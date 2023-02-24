@@ -1,42 +1,25 @@
-import { waterfall } from 'async';
 import shelljs from 'shelljs';
 import {
-  getKeypathFromUrl, getSitespeedCommand,
-  getSitespeedReportPath, getSitespeedWebVitals,
+  getSitespeedCommand,
+  getSitespeedReportPath,
   readSitespeedJsonReport
 } from '../utils';
 
-export async function runSitespeed(options) {
+export async function runSitespeed(url, options) {
   const {
-    urls, outputPath, sitespeedConfig
+    urlKey, outputPath, sitespeedConfig
   } = options;
 
-  const testResultList = await waterfall(urls.map(url=>{
-    return async (preResult = {})=>{
-      const urlKey = getKeypathFromUrl(url);
-      const currentOutputPath = getSitespeedReportPath(outputPath, urlKey);
+  const currentOutputPath = getSitespeedReportPath(outputPath, urlKey);
 
-      return new Promise((res)=>{
-        shelljs.exec(
-          getSitespeedCommand(url, {
-            ...sitespeedConfig,
-            outputFolder: currentOutputPath
-          })
-        );
+  shelljs.exec(
+    getSitespeedCommand(url, {
+      ...sitespeedConfig,
+      outputFolder: currentOutputPath
+    })
+  );
 
-        const preUrlResult = preResult[urlKey] || {};
-        const runnerResult = readSitespeedJsonReport(currentOutputPath);
+  const runnerResult = readSitespeedJsonReport(currentOutputPath);
 
-        res({
-          ...preResult,
-          [urlKey]: {
-            url,
-            resultList: [...preUrlResult.resultList || [], runnerResult]
-          }
-        });
-      });
-    };
-  }));
-
-  return getSitespeedWebVitals(testResultList);
+  return runnerResult;
 }

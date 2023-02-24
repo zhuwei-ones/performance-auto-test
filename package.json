@@ -7,7 +7,7 @@
     "test": "jest",
     "coverage": " jest --coverage",
     "clean": "rimraf dist && echo 'clean dist ok'",
-    "build": "babel src --out-dir dist && echo 'build ok'",
+    "build": "babel src --out-dir dist ",
     "watch": "npm run build -- -w",
     "lint": "eslint src",
     "verfify": "lint-staged",
