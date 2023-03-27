@@ -1,4 +1,6 @@
-import shelljs from 'shelljs';
+import { exec } from 'child_process';
+import util from 'util';
+
 import {
   getSitespeedCommand,
   getSitespeedReportPath,
@@ -12,12 +14,10 @@ export async function runSitespeed(url, options) {
 
   const currentOutputPath = getSitespeedReportPath(outputPath, urlKey);
 
-  shelljs.exec(
-    getSitespeedCommand(url, {
-      ...sitespeedConfig,
-      outputFolder: currentOutputPath
-    })
-  );
+  await util.promisify(exec)(getSitespeedCommand(url, {
+    ...sitespeedConfig,
+    outputFolder: currentOutputPath
+  }));
 
   const runnerResult = readSitespeedJsonReport(currentOutputPath);
 
