@@ -36,3 +36,8 @@ export const logger = createLogger({
   ),
   transports: [new transports.Console()]
 });
+
+// 打印测试链接以及配置
+export const printfPerformanceTestContent = ()=>{
+
+};
