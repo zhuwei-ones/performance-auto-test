@@ -4,7 +4,7 @@
   "description": "网站性能自动化测试，一键输出多工具性能报告",
   "main": "dist/index.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --detectOpenHandles",
     "coverage": " jest --coverage",
     "clean": "rimraf dist && echo 'clean dist ok'",
     "build": "babel src --out-dir dist ",
@@ -73,6 +73,8 @@
     "glob": "^8.1.0",
     "joi": "^17.7.0",
     "json2md": "^2.0.0",
+    "koa": "^2.14.1",
+    "koa-static": "^5.0.0",
     "lighthouse": "^9.6.8",
     "marked": "^4.2.12",
     "progress": "^2.0.3",
