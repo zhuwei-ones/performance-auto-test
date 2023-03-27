@@ -1,4 +1,4 @@
-import { writeFileSync } from 'fs-extra';
+import { ensureFileSync, writeFileSync } from 'fs-extra';
 import json2md from 'json2md';
 import { marked } from 'marked';
 import glob from 'glob';
@@ -11,38 +11,38 @@ import {
 json2md.converters.redText = (input)=> {
   return `<font color="${COLOR_MAP.RED}">${input}</font>`;
 };
+
 json2md.converters.greenText = (input)=> {
   return `<font color="${COLOR_MAP.GREEN}">${input}</font>`;
 };
+
 json2md.converters.orangeText = (input)=> {
   return `<font color="${COLOR_MAP.ORANGE}">${input}</font>`;
 };
 
 const getHtmlResult = ({ bodyStr, title }) => {
   return `
-  
     <!DOCTYPE html>
     <html lang="en">
-        <head> 
-            <title>${title}</title> 
-            <meta charset="UTF-8" /> 
-            <meta name="viewport" content="width=device-width, initial-scale=1" /> 
-            <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/markdown-css-smartisan/github-markdown.css" /> 
-            <style>
-                .markdown-body {
-                    width: 80%;
-                    margin: 0 auto;
-                }
-            </style> 
-        </head> 
-        <body> 
-            <article class="markdown-body">
-                ${bodyStr}
-            </article>  
-        </body>
+      <head> 
+        <title>${title}</title> 
+        <meta charset="UTF-8" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1" /> 
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/markdown-css-smartisan/github-markdown.css" /> 
+        <style>
+          .markdown-body {
+              width: 80%;
+              margin: 0 auto;
+          }
+        </style> 
+      </head> 
+      <body> 
+        <article class="markdown-body">
+          ${bodyStr}
+        </article>  
+      </body>
     </html>
-      
-    `;
+  `;
 };
 
 export const getReportConclusion = ({ performanceResultList, metricsConfig })=>{
@@ -101,7 +101,7 @@ export const getToolCompareTableData = ({ performanceResultList, metricsConfig }
 
   const { good: goodMetrics, bad: badMetrics } = metricsConfig;
 
-  console.log('performance data--->', performanceResultList);
+  // console.log('performance data--->', performanceResultList);
 
   const allTools = Object.keys(performanceResultList);
   const oneToolName = allTools[0];
@@ -214,7 +214,7 @@ export const getLighthouseReportLinks = ({ toolOutputPath, outputPath, result })
   });
   return {
     table: {
-      headers: ['测试页面', '测试结果', ...new Array(content?.[0].slice(2).length).fill('')],
+      headers: ['测试页面', '测试结果', ...new Array(content?.[0]?.slice(2).length).fill('')],
       rows: content
     }
   };
@@ -265,7 +265,7 @@ export const getSitespeedReportLinks = ({ toolOutputPath, outputPath, result })=
 
   return {
     table: {
-      headers: ['测试页面', '测试结果', ...new Array(content?.[0].slice(2).length).fill('')],
+      headers: ['测试页面', '测试结果', ...new Array(content?.[0]?.slice(2).length).fill('')],
       rows: content
     }
   };
@@ -330,7 +330,7 @@ export const createPerformanceReport = (performanceResultList, options)=>{
 
   const json = [];
 
-  console.log('performanceResultList--->', performanceResultList);
+  // console.log('performanceResultList--->', performanceResultList);
 
   const performanceResultMap = performanceResultList.reduce((pre, current)=>{
     return {
@@ -376,13 +376,15 @@ export const createPerformanceReport = (performanceResultList, options)=>{
 
   const content = json2md(json);
 
-  console.log('md content--->', content);
+  // console.log('md content--->', content);
 
   let htmlContent = marked.parse(content);
 
   htmlContent = getHtmlResult({ bodyStr: htmlContent, title: '性能测试报告' });
 
   const reportPath = `${outputPath}/report.html`;
+
+  ensureFileSync(reportPath);
 
   writeFileSync(reportPath, htmlContent);
 
