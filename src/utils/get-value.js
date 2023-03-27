@@ -10,6 +10,7 @@ import {
   METRICS_SITESPEED_MAP,
   SITESPEED_JSON_RESULT_DIR
 } from '../const';
+import { logger } from './log';
 
 export function getAbsolutePath(_path) {
   return resolve(CWD, _path);
@@ -57,6 +58,7 @@ export function getLighthouseReportPath(parentPath, name, index) {
     jsonFilePath: jsonFile
   };
 }
+
 export function getSitespeedReportPath(parentPath, name) {
   const dir = `${parentPath}/${name}`;
   ensureDirSync(dir);
@@ -94,7 +96,7 @@ function joinNonEmpty(strings, delimeter) {
 function toSafeKey(key) {
   if (!key) return '';
   // U+2013 : EN DASH – as used on https://en.wikipedia.org/wiki/2019–20_coronavirus_pandemic
-  return key.replace(/[.~ /+|,:?&%–)(]|%7C/g, '_');
+  return key.replace(/[.~ /+|,?&%–:)(]|%7C/g, '_');
 }
 
 export function getKeypathFromUrl(url, includeQueryParams, useHash, group) {
@@ -118,19 +120,21 @@ export function getKeypathFromUrl(url, includeQueryParams, useHash, group) {
   );
   path = joinNonEmpty([path, toSafeKey(newUrl.hash)], '_');
 
-  const keys = [toSafeKey(group || newUrl.hostname), path];
+  const keys = [toSafeKey(group || newUrl.host), path];
 
   return joinNonEmpty(keys, '_');
 }
 
-export function getSitespeedCommand(url, options) {
+export function getSitespeedCommand(url, options = {}) {
   const currentOptions = json2CliOptions(options).join(' ');
 
-  console.log('sitespeed options-->', currentOptions);
-
-  return `
-    npx sitespeed.io ${url} ${currentOptions}  
+  const command = `
+   npx  sitespeed.io ${url} ${currentOptions}  
   `;
+
+  logger.info(`sitespeed command--> ${command}`);
+
+  return command;
 }
 
 export function getLighthouseWebVitals(lighthouseResultList = []) {
@@ -204,7 +208,7 @@ export function getSitespeedWebVitals(sitespeedResultList) {
   const metricsList = Object.keys(METRICS_SITESPEED_MAP);
   const allUrls = Object.keys(sitespeedResultList);
 
-  console.log('sitespeedResultList', sitespeedResultList);
+  // console.log('sitespeedResultList', sitespeedResultList);
 
   return allUrls
     .reduce((pre, url)=>{
