@@ -11,7 +11,7 @@ import { getAbsolutePath, getKeypathFromUrl } from './get-value';
 
 export function verifyOptions(options = {}) {
   const schema = Joi.object({
-    urls: Joi.array().items(Joi.string().uri()).single()
+    urls: Joi.array().items(Joi.string().uri().required()).single()
       .required(),
     iterations: Joi.number(),
     outputPath: Joi.string()
@@ -22,6 +22,8 @@ export function verifyOptions(options = {}) {
   if (result.error) {
     throw result.error;
   }
+
+  return result.value;
 }
 
 export function getLighthouseOptions(optoins = {}) {
@@ -32,7 +34,7 @@ export function getLighthouseOptions(optoins = {}) {
   return {
     urls: urls.map(url=>{
       return new Array(iterations).fill(0)
-        .map((_, index)=>({ url, index, urlKey: getKeypathFromUrl(url) }));
+        .map((_, index)=>({ url, index: index + 1, urlKey: getKeypathFromUrl(url) }));
     }).flat(),
     iterations,
     outputPath: `${outputPath}/${DEFAULT_LIGHTHOUSE_REPORT_DIR}`,
@@ -69,7 +71,7 @@ export function getSitespeedOptions(optoins = {}) {
   } = optoins;
 
   return {
-    urls: urls.map((url, index)=>({ url, index, urlKey: getKeypathFromUrl(url) })),
+    urls: urls.map((url, index)=>({ url, index: index + 1, urlKey: getKeypathFromUrl(url) })),
     iterations,
     outputPath: `${outputPath}/${DEFAULT_SITESPEED_REPORT_DIR}`,
     sitespeedConfig: {
@@ -148,9 +150,12 @@ const GET_TOOL_OPTIONS_MAP = {
 };
 
 export function getAllOptionsWithDefaultValue(options = {}) {
-  verifyOptions(options);
+  const newOptions = verifyOptions(options);
 
-  const currentOptions = getDefaultOptions(options);
+  const currentOptions = getDefaultOptions({
+    ...options,
+    ...newOptions
+  });
 
   PERFORMANCE_TOOLS_LIST.forEach((toolName) => {
     if (currentOptions[toolName]) {

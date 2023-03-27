@@ -15,21 +15,23 @@ const TASK_RESULT_FUNC_MAP = {
   [PERFORMANCE_TOOLS_MAP.SITESPEED]: getSitespeedWebVitals
 };
 
-export async function runTask(func, lifecycles = {}) {
+export async function runTask(func, { options, lifecycles } = {}) {
   const {
     onDone, onError, onBegin, onEnd
   } = lifecycles;
 
+  const { tool, url } = options;
+
   try {
-    onBegin?.();
+    onBegin?.({ tool, url });
     const result = await func();
-    onDone?.();
+    onDone?.({ tool, url });
     return result;
   } catch (error) {
     onError?.(error);
     throw error;
   } finally {
-    onEnd?.();
+    onEnd?.({ tool });
   }
 }
 
@@ -74,7 +76,7 @@ export async function runPerformanceTasks(taskList, lifecycles = {}) {
                     resultList: [...(preUrlTestResult?.[urlKey]?.resultList || []), runnerResult]
                   }
                 };
-              }, lifecycles);
+              }, { options: { tool: type, url }, lifecycles });
             };
           })
         );
