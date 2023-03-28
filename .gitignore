@@ -6,3 +6,4 @@ dist
 performance-test-report
 sitespeed-result
 lighthouse-result
+*.log
