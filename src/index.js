@@ -1,7 +1,7 @@
 const chromeLauncher = require('chrome-launcher');
 
 import {
-  createPerformanceReport, getAllOptionsWithDefaultValue, logger, printfPerformanceTestContent
+  createPerformanceReport, getAllOptionsWithDefaultValue, logger
 } from './utils';
 import { getTaskList, runTasks } from './utils/task';
 
@@ -10,7 +10,7 @@ async function PerformanceTest(options) {
 
   logger.info('开始性能测试');
 
-  printfPerformanceTestContent();
+  logger.info('性能测试参数---->', currentOptions);
 
   const taskList = getTaskList(currentOptions);
 
@@ -25,10 +25,13 @@ async function PerformanceTest(options) {
     await chromeLauncher.launch({
       startingUrl: `file://${reportPath}`
     });
+
     logger.success('性能报告输出成功');
   } catch (error) {
     logger.error('性能报告输出失败', error);
     throw error;
+  } finally {
+    process.exit();
   }
 }
 

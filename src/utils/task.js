@@ -4,6 +4,7 @@ import { PERFORMANCE_TOOLS_LIST, PERFORMANCE_TOOLS_MAP } from '../const';
 import { runLighthouse } from '../lib/lighthouse';
 import { runSitespeed } from '../lib/sitespeed';
 import { getLighthouseWebVitals, getSitespeedWebVitals } from './get-value';
+import { logger } from './log';
 
 const TASK_MAP = {
   [PERFORMANCE_TOOLS_MAP.SITESPEED]: runSitespeed,
@@ -24,11 +25,14 @@ export async function runTask(func, { options, lifecycles } = {}) {
 
   try {
     onBegin?.({ tool, url });
+    logger.info(`${tool} 开始测试 ${url}}`);
     const result = await func();
     onDone?.({ tool, url });
+    logger.success(`${tool} 测试 ${url}} 完成`);
     return result;
   } catch (error) {
     onError?.(error);
+    logger.error(`${tool} 测试 ${url}} 失败`, error);
     throw error;
   } finally {
     onEnd?.({ tool });

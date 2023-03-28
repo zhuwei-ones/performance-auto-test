@@ -17,7 +17,7 @@ const levelColorMap = {
 
 const myFormat = (type)=>{
   return printf(({
-    level, message, label: currentLabel, ...rest
+    level, message, label: currentLabel, timestamp: _, ...rest
   }) => {
     const color = levelColorMap[level];
     let restString = JSON.stringify(rest, undefined, 2);

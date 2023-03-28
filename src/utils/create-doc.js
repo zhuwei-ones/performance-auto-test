@@ -7,6 +7,7 @@ import {
   COLOR_MAP,
   KBPS_NAME, METRICS_REPORT_MAP, METRICS_SECOND_UNIT, METRICS_STANDARD_MAP, PERFORMANCE_TOOLS_MAP
 } from '../const';
+import { logger } from './log';
 
 json2md.converters.redText = (input)=> {
   return `<font color="${COLOR_MAP.RED}">${input}</font>`;
@@ -372,7 +373,7 @@ export const createPerformanceReport = (performanceResultList, options)=>{
     }));
   });
 
-  console.log('md json--->', JSON.stringify(json, null, { space: 4 }));
+  logger.info('report result json--->', JSON.stringify(json, null, { space: 2 }));
 
   const content = json2md(json);
 
