@@ -1,5 +1,5 @@
 {
-  "name": "performace-auto-test",
+  "name": "@ones-ai/performace-auto-test",
   "version": "1.0.0",
   "description": "网站性能自动化测试，一键输出多工具性能报告",
   "main": "dist/index.js",
@@ -7,7 +7,7 @@
     "test": "jest --detectOpenHandles",
     "coverage": " jest --coverage",
     "clean": "rimraf dist && echo 'clean dist ok'",
-    "build": "babel src --out-dir dist ",
+    "build": "babel src --out-dir dist",
     "watch": "npm run build -- -w",
     "lint": "eslint src",
     "verfify": "lint-staged",
@@ -42,6 +42,13 @@
       "eslint --ext .js --fix ./src",
       "git add"
     ]
+  },
+  "maintainers": [
+    "ones"
+  ],
+  "publishConfig": {
+    "registry": "https://npm2.myones.net/",
+    "access": "public"
   },
   "devDependencies": {
     "@babel/cli": "^7.19.3",
