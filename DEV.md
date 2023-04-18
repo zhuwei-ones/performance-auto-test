@@ -39,4 +39,4 @@ npm publish --registry=https://npm2.myones.net/
 
 ```
 
-发布之后，可以到这里查看 https://npm.myones.net/package/@ones-ai/webp-auto-transform
+发布之后，可以到这里查看 https://npm.myones.net/package/@ones-ai/performace-auto-test
