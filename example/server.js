@@ -5,7 +5,7 @@ function server() {
     const app = new Koa()
       .use(require("koa-static")(`${process.cwd()}/example`, {}))
       .listen(8091, () => {
-        console.log("listening on port 8090");
+        console.log("listening on port 8091");
         res(app);
       })
   });
