@@ -165,7 +165,7 @@ export function getLighthouseWebVitals(lighthouseResultList = []) {
               const name = METRICS_LIGHTHOUSE_MAP[metricsKey];
               return {
                 ...preValue,
-                [metricsKey]: +(audits[name]?.numericValue?.toFixed(3) || -0.1)
+                [metricsKey]: +(audits[name]?.numericValue?.toFixed(3) ?? -0.1)
               };
             }, {});
         })
@@ -221,7 +221,7 @@ export function getSitespeedWebVitals(sitespeedResultList) {
         const googleWebVitalsKey = METRICS_SITESPEED_MAP[mtsKey];
         return {
           ...preInfo,
-          [mtsKey]: googleWebVitals?.[googleWebVitalsKey]?.median || -0.1
+          [mtsKey]: googleWebVitals?.[googleWebVitalsKey]?.median ?? -0.1
         };
       }, {});
 
