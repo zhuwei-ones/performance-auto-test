@@ -6,7 +6,7 @@ export const DEFAULT_CONFIG_PATH = './performance-test.config.json';
 
 export const DEFAULT_REPORT_DIR = './performance-test-report';
 
-export const DEFAULT_LIGHTHOUSE_REPORT_DIR = 'lighthoust-result';
+export const DEFAULT_LIGHTHOUSE_REPORT_DIR = 'lighthouse-result';
 
 export const DEFAULT_SITESPEED_REPORT_DIR = 'sitespeed-result';
 
@@ -126,7 +126,8 @@ export const COMMON_TEST_CONFIG = {
 export const LIGHTHOUSE_DEFAULT_OPTIONS = {
   onlyCategories: ['performance'],
   output: 'html',
-  extraHeaders: HEADERS
+  extraHeaders: HEADERS,
+  chromeFlags: ['--headless']
 };
 
 export const LIGHTHOUSE_DEFAULT_CONFIG = {
