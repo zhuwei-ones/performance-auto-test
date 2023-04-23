@@ -9,6 +9,7 @@ import {
   DEFAULT_LIGHTHOUSE_REPORT_DIR,
   DEFAULT_SITESPEED_REPORT_DIR,
   LIGHTHOUSE_DEFAULT_CONFIG,
+  LIGHTHOUSE_DEFAULT_OPTIONS,
   SITESPEED_DEFAULT_CONFIG,
 } from "../src/const";
 import useServer from '../example/server'
@@ -59,6 +60,7 @@ test("Test Ligthhouse Entry", async () => {
     urlKey: key,
     urlIndex: 1,
     lighthouseConfig: LIGHTHOUSE_DEFAULT_CONFIG,
+    lighthouseOptions: LIGHTHOUSE_DEFAULT_OPTIONS
   });
   expect(statSync(`${outputPath2}/${key}/1.json`).size).toBeGreaterThan(1000);
   expect(statSync(`${outputPath2}/${key}/1.html`).size).toBeGreaterThan(1000);

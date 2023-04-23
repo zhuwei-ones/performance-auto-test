@@ -46,6 +46,7 @@ describe("get options", () => {
       iterations: 3,
       outputPath: "output",
       urls: ["https://www.baidu.com"],
+      preview: false,
       lighthouse: true,
       lighthouseOptions: {
         iterations: 3,
@@ -93,7 +94,16 @@ describe("get options", () => {
             uploadThroughputKbps: 10240,
           },
         },
-        outputPath: "output/lighthoust-result",
+        lighthouseOptions: {
+          onlyCategories: ["performance"],
+          output: "html",
+          extraHeaders: {
+            Cookie:
+              "OauthUserID=605711609;OauthAccessToken=dev.myones.net60571160932529168000;OauthExpires=32529168000",
+          },
+          chromeFlags: ["--headless"],
+        },
+        outputPath: "output/lighthouse-result",
         urls: [
           {
             index: 1,
@@ -187,10 +197,15 @@ describe("get value", () => {
         getSitespeedCommand("http://baidu.com", {
           a: true,
           b: 1,
-          c:false
+          c: false,
+          "browsertime.chrome.args": "no-sandbox",
         })
       )
-    ).toEqual(removeUnusedChar("npx sitespeed.io http://baidu.com --a --b1"));
+    ).toEqual(
+      removeUnusedChar(
+        "npx sitespeed.io http://baidu.com --a --b1 --browsertime.chrome.args no-sandbox"
+      )
+    );
   });
 
   test("getSitespeedWebVitals", () => {
