@@ -8,6 +8,8 @@ import { getTaskList, runTasks } from './utils/task';
 async function PerformanceTest(options) {
   const currentOptions = getAllOptionsWithDefaultValue(options);
 
+  const { preview } = currentOptions;
+
   logger.info('开始性能测试');
 
   logger.info('性能测试参数---->', currentOptions);
@@ -22,16 +24,15 @@ async function PerformanceTest(options) {
 
     const reportPath = await createPerformanceReport(taskResultList, currentOptions);
 
-    await chromeLauncher.launch({
-      startingUrl: `file://${reportPath}`
-    });
-
+    if (preview) {
+      await chromeLauncher.launch({
+        startingUrl: `file://${reportPath}`
+      });
+    }
     logger.success('性能报告输出成功');
   } catch (error) {
     logger.error('性能报告输出失败', error);
     throw error;
-  } finally {
-    process.exit();
   }
 }
 
