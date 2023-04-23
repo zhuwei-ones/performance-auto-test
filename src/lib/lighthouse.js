@@ -1,18 +1,17 @@
 const chromeLauncher = require('chrome-launcher');
 import lighthouse from 'lighthouse';
-import { LIGHTHOUSE_DEFAULT_OPTIONS } from '../const';
 import { createLighthouseReport } from '../utils/file';
 
 const launchChromeAndRunLighthouse = async (url, options, config) => {
+  const { chromeFlags } = options;
   const chrome = await chromeLauncher.launch({
-    chromeFlags: ['--headless']
+    chromeFlags
   });
 
   const runnerResult = await lighthouse(
     url,
     {
       port: chrome.port,
-      ...LIGHTHOUSE_DEFAULT_OPTIONS,
       ...options
     },
     config
@@ -25,12 +24,12 @@ const launchChromeAndRunLighthouse = async (url, options, config) => {
 
 export async function runLighthouse(url, options) {
   const {
-    outputPath, urlKey, urlIndex, lighthouseConfig
+    outputPath, urlKey, urlIndex, lighthouseConfig, lighthouseOptions
   } = options;
 
   let runnerResult = await launchChromeAndRunLighthouse(
     url,
-    null,
+    lighthouseOptions,
     lighthouseConfig
   );
 

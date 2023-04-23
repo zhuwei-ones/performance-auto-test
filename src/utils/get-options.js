@@ -1,8 +1,10 @@
 import Joi from 'joi';
+import { isNil, omitBy } from 'lodash';
 import {
   COMMON_TEST_CONFIG, DEFAULT_LIGHTHOUSE_REPORT_DIR,
   DEFAULT_REPORT_DIR,
   DEFAULT_SITESPEED_REPORT_DIR, LIGHTHOUSE_DEFAULT_CONFIG,
+  LIGHTHOUSE_DEFAULT_OPTIONS,
   METRICS_CONFIG,
   PERFORMANCE_TOOLS_LIST,
   PERFORMANCE_TOOLS_MAP, SITESPEED_DEFAULT_CONFIG
@@ -31,6 +33,14 @@ export function getLighthouseOptions(optoins = {}) {
     urls, iterations, outputPath, setting, lighthouseConfig = {}
   } = optoins;
 
+  const {
+    chromeFlags, onlyCategories, output, extraHeaders, ...configRest
+  } = lighthouseConfig;
+
+  const lighthouseOptions = {
+    chromeFlags, onlyCategories, output, extraHeaders
+  };
+
   return {
     urls: urls.map(url=>{
       return new Array(iterations).fill(0)
@@ -40,10 +50,10 @@ export function getLighthouseOptions(optoins = {}) {
     outputPath: `${outputPath}/${DEFAULT_LIGHTHOUSE_REPORT_DIR}`,
     lighthouseConfig: {
       ...LIGHTHOUSE_DEFAULT_CONFIG,
-      ...lighthouseConfig,
+      ...configRest,
       throttling: { // constants.throttling.desktopDense4G,
         ...LIGHTHOUSE_DEFAULT_CONFIG.settings.throttling,
-        ...(lighthouseConfig?.settings?.throttling || {}),
+        ...(configRest?.settings?.throttling || {}),
         rttMs: setting.latency, // Round-Trip Time，往返时延，从发送端发送数据开始，到发送端收到来自接收端的确认
         requestLatencyMs: setting.latency, // 0 means unset
         downloadThroughputKbps: setting.downloadKbps,
@@ -52,15 +62,19 @@ export function getLighthouseOptions(optoins = {}) {
       },
       screenEmulation: {
         ...LIGHTHOUSE_DEFAULT_CONFIG.settings.screenEmulation,
-        ...(lighthouseConfig?.settings?.screenEmulation || {}),
+        ...(configRest?.settings?.screenEmulation || {}),
 
         // setting 的权重比 lighthouseConf 大
         width: setting.width,
         height: setting.height
       },
       emulatedUserAgent: setting.userAgent
-        || lighthouseConfig.settings.userAgent
+        || configRest.settings.userAgent
         || LIGHTHOUSE_DEFAULT_CONFIG.settings.emulatedUserAgent
+    },
+    lighthouseOptions: {
+      ...LIGHTHOUSE_DEFAULT_OPTIONS,
+      ...omitBy(lighthouseOptions, isNil)
     }
   };
 }
@@ -108,6 +122,7 @@ export function getDefaultOptions(options) {
   return {
     iterations: iterations || 3,
     outputPath: getOutputPath(outputPath, testTime),
+    preview: options.preview || false,
     ...options,
     metricsConfig: {
       good: {
@@ -138,6 +153,8 @@ export function getDefaultOptions(options) {
       PERFORMANCE_TOOLS_MAP.LIGHTHOUSE,
       PERFORMANCE_TOOLS_MAP.SITESPEED
     ],
+
+    // 默认开启所有的测试工具
     [PERFORMANCE_TOOLS_MAP.LIGHTHOUSE]: options[PERFORMANCE_TOOLS_MAP.LIGHTHOUSE] ?? true,
     [PERFORMANCE_TOOLS_MAP.SITESPEED]: options[PERFORMANCE_TOOLS_MAP.SITESPEED] ?? true
 
@@ -157,6 +174,7 @@ export function getAllOptionsWithDefaultValue(options = {}) {
     ...newOptions
   });
 
+  // 根据配置项，读取工具对应的配置
   PERFORMANCE_TOOLS_LIST.forEach((toolName) => {
     if (currentOptions[toolName]) {
       currentOptions[`${toolName}Options`] = GET_TOOL_OPTIONS_MAP[toolName](currentOptions);
