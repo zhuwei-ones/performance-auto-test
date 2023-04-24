@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0-alpha.0](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.0.1...v1.1.0-alpha.0) (2023-04-24)
+
+
+### Features
+
+* 支持是否预览选项 ([db6c3ba](https://github.com/zhuwei-ones/performance-auto-test/commit/db6c3ba5d39a7a5843b026cd2cd91873aa63c7d9))
+* lighthouse 支持传入 options，用于定义 chrome ([f9d0c7f](https://github.com/zhuwei-ones/performance-auto-test/commit/f9d0c7fe42214eaa04698ad498ea2501c179da4b))
+
+
+### Bug Fixes
+
+* 名字错误 ([50a6794](https://github.com/zhuwei-ones/performance-auto-test/commit/50a6794f05a74b621e2acad836d0a2784219fa36))
+* 默认值判断错误 ([dcc329b](https://github.com/zhuwei-ones/performance-auto-test/commit/dcc329bf942df87a290edc6bdd5ae759d334e808))
+
 ### [1.0.1](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.0.0...v1.0.1) (2023-04-19)
 
 
