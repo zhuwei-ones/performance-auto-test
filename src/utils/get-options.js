@@ -16,7 +16,11 @@ export function verifyOptions(options = {}) {
     urls: Joi.array().items(Joi.string().uri().required()).single()
       .required(),
     iterations: Joi.number(),
-    outputPath: Joi.string()
+    outputPath: Joi.string(),
+    metricsConfig: Joi.object(),
+    lighthouseConfig: Joi.object(),
+    sitespeedConfig: Joi.object(),
+    setting: Joi.object()
   });
 
   const result = schema.validate(options);
@@ -51,26 +55,30 @@ export function getLighthouseOptions(optoins = {}) {
     lighthouseConfig: {
       ...LIGHTHOUSE_DEFAULT_CONFIG,
       ...configRest,
-      throttling: { // constants.throttling.desktopDense4G,
-        ...LIGHTHOUSE_DEFAULT_CONFIG.settings.throttling,
-        ...(configRest?.settings?.throttling || {}),
-        rttMs: setting.latency, // Round-Trip Time，往返时延，从发送端发送数据开始，到发送端收到来自接收端的确认
-        requestLatencyMs: setting.latency, // 0 means unset
-        downloadThroughputKbps: setting.downloadKbps,
-        uploadThroughputKbps: setting.uploadKbps,
-        cpuSlowdownMultiplier: setting.cpuSlowdown
-      },
-      screenEmulation: {
-        ...LIGHTHOUSE_DEFAULT_CONFIG.settings.screenEmulation,
-        ...(configRest?.settings?.screenEmulation || {}),
+      settings: {
+        ...LIGHTHOUSE_DEFAULT_CONFIG.settings,
+        ...configRest.settings,
+        throttling: { // constants.throttling.desktopDense4G,
+          ...LIGHTHOUSE_DEFAULT_CONFIG.settings.throttling,
+          ...(configRest?.settings?.throttling || {}),
+          rttMs: setting.latency, // Round-Trip Time，往返时延，从发送端发送数据开始，到发送端收到来自接收端的确认
+          requestLatencyMs: setting.latency, // 0 means unset
+          downloadThroughputKbps: setting.downloadKbps,
+          uploadThroughputKbps: setting.uploadKbps,
+          cpuSlowdownMultiplier: setting.cpuSlowdown
+        },
+        screenEmulation: {
+          ...LIGHTHOUSE_DEFAULT_CONFIG.settings.screenEmulation,
+          ...(configRest?.settings?.screenEmulation || {}),
 
-        // setting 的权重比 lighthouseConf 大
-        width: setting.width,
-        height: setting.height
-      },
-      emulatedUserAgent: setting.userAgent
+          // setting 的权重比 lighthouseConf 大
+          width: setting.width,
+          height: setting.height
+        },
+        emulatedUserAgent: setting.userAgent
         || configRest.settings.userAgent
         || LIGHTHOUSE_DEFAULT_CONFIG.settings.emulatedUserAgent
+      }
     },
     lighthouseOptions: {
       ...LIGHTHOUSE_DEFAULT_OPTIONS,

@@ -51,16 +51,7 @@ describe("get options", () => {
       lighthouseOptions: {
         iterations: 3,
         lighthouseConfig: {
-          emulatedUserAgent:
-            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36",
           extends: "lighthouse:default",
-          screenEmulation: {
-            deviceScaleFactor: 1,
-            disabled: false,
-            height: 1080,
-            mobile: false,
-            width: 1920,
-          },
           settings: {
             emulatedUserAgent:
               "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36",
@@ -84,14 +75,6 @@ describe("get options", () => {
               throughputKbps: 10240,
               uploadThroughputKbps: 10240,
             },
-          },
-          throttling: {
-            cpuSlowdownMultiplier: 1,
-            downloadThroughputKbps: 10240,
-            requestLatencyMs: 0,
-            rttMs: 0,
-            throughputKbps: 10240,
-            uploadThroughputKbps: 10240,
           },
         },
         lighthouseOptions: {
@@ -175,7 +158,151 @@ describe("get options", () => {
       },
       testTools: ["lighthouse", "sitespeed"],
     });
+
+    const result2 = getAllOptionsWithDefaultValue({
+      urls: ["https://www.baidu.com"],
+      iterations: 3,
+      outputPath: "output",
+      lighthouseConfig:{
+        chromeFlags:["--headless","--no-sandbox"]
+      },
+      sitespeedConfig:{
+        "browsertime.headless":true,
+        "browsertime.chrome.args" :"no-sandbox"
+      },
+      setting:{
+        latency:9999
+      }
+    });
+
+    delete result2.testTime;
+
+    expect(result2).toEqual({
+      iterations: 3,
+      outputPath: "output",
+      urls: ["https://www.baidu.com"],
+      preview: false,
+      lighthouse: true,
+      lighthouseOptions: {
+        iterations: 3,
+        lighthouseConfig: {
+          extends: "lighthouse:default",
+          settings: {
+            emulatedUserAgent:
+              "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36",
+            formFactor: "desktop",
+            maxWaitForFcp: 15000,
+            maxWaitForLoad: 35000,
+            onlyCategories: ["performance"],
+            screenEmulation: {
+              deviceScaleFactor: 1,
+              disabled: false,
+              height: 1080,
+              mobile: false,
+              width: 1920,
+            },
+            skipAudits: ["uses-http2"],
+            throttling: {
+              cpuSlowdownMultiplier: 1,
+              downloadThroughputKbps: 10240,
+              requestLatencyMs: 9999,
+              rttMs: 9999,
+              throughputKbps: 10240,
+              uploadThroughputKbps: 10240,
+            },
+          }
+        },
+        lighthouseOptions: {
+          onlyCategories: ["performance"],
+          output: "html",
+          extraHeaders: {
+            Cookie:
+              "OauthUserID=605711609;OauthAccessToken=dev.myones.net60571160932529168000;OauthExpires=32529168000",
+          },
+          chromeFlags:["--headless","--no-sandbox"]
+        },
+        outputPath: "output/lighthouse-result",
+        urls: [
+          {
+            index: 1,
+            url: "https://www.baidu.com",
+            urlKey: "www_baidu_com__",
+          },
+          {
+            index: 2,
+            url: "https://www.baidu.com",
+            urlKey: "www_baidu_com__",
+          },
+          {
+            index: 3,
+            url: "https://www.baidu.com",
+            urlKey: "www_baidu_com__",
+          },
+        ],
+      },
+      metricsConfig: {
+        bad: {
+          cls: 100,
+          fid: 100,
+          lcp: 2500,
+        },
+        good: {
+          cls: 100,
+          fid: 100,
+          lcp: 1200,
+        },
+      },
+      lighthouseConfig: { chromeFlags: [ '--headless', '--no-sandbox' ] },
+      sitespeedConfig: {
+        'browsertime.headless': true,
+        'browsertime.chrome.args': 'no-sandbox'
+      },
+      setting: {
+        cpuSlowdown: 1,
+        downloadKbps: 10240,
+        height: 1080,
+        latency: 9999,
+        uploadKbps: 10240,
+        userAgent:
+          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36",
+        width: 1920,
+      },
+      sitespeed: true,
+      sitespeedOptions: {
+        iterations: 3,
+        outputPath: "output/sitespeed-result",
+        sitespeedConfig: {
+          browser: "chrome",
+          "browsertime.connectivity.downstreamKbps": 10240,
+          "browsertime.connectivity.latency": "'9999'",
+          "browsertime.connectivity.profile": "custom",
+          "browsertime.connectivity.upstreamKbps": 10240,
+          "browsertime.headless":true,
+          "browsertime.chrome.args" :"no-sandbox",
+          "browsertime.iterations": 3,
+          "browsertime.userAgent":
+            "'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36'",
+          "browsertime.viewPort": "1920x1080",
+          "chrome.CPUThrottlingRate": 1,
+          "plugins.add": "analysisstorer",
+          requestheader:
+            "cookie:'OauthUserID=605711609;OauthAccessToken=dev.myones.net60571160932529168000;OauthExpires=32529168000'",
+          silent: true,
+        },
+        urls: [
+          {
+            index: 1,
+            url: "https://www.baidu.com",
+            urlKey: "www_baidu_com__",
+          },
+        ],
+      },
+      testTools: ["lighthouse", "sitespeed"],
+    });
+
   });
+
+
 });
 
 describe("get value", () => {
