@@ -20,7 +20,9 @@ export function verifyOptions(options = {}) {
     metricsConfig: Joi.object(),
     lighthouseConfig: Joi.object(),
     sitespeedConfig: Joi.object(),
-    setting: Joi.object()
+    setting: Joi.object(),
+    lighthouse: Joi.boolean(),
+    sitespeed: Joi.boolean()
   });
 
   const result = schema.validate(options);
