@@ -46,3 +46,47 @@ test("Test Main Entry", async () => {
   expect(statSync(sChildDir).size).toBeGreaterThan(1000);
 
 });
+
+
+test("Test Main Entry Only Performance", async () => {
+  await PerformanceTest({
+    urls: [
+      url
+    ],
+    iterations: 1,
+    outputPath:_oupAbsolute ,
+    sitespeed:false
+  });
+
+  const lighthouseReportDir = getAbsolutePath(`${_oup}/**/${DEFAULT_LIGHTHOUSE_REPORT_DIR}/**/1.json`);
+  const sitespeedReportDir = getAbsolutePath(`${_oup}/**/${DEFAULT_SITESPEED_REPORT_DIR}/**/data/browsertime.summary-localhost.json`);
+
+  const lChildDir = glob.sync(lighthouseReportDir)?.[0]
+  const sChildDir = glob.sync(sitespeedReportDir)?.[0]
+
+  expect(statSync(lChildDir).size).toBeGreaterThan(1000);
+  expect(sChildDir).toBeUndefined()
+
+});
+
+
+test("Test Main Entry Only Sitespeed", async () => {
+  await PerformanceTest({
+    urls: [
+      url
+    ],
+    iterations: 1,
+    outputPath:_oupAbsolute ,
+    lighthouse:false
+  });
+
+  const lighthouseReportDir = getAbsolutePath(`${_oup}/**/${DEFAULT_LIGHTHOUSE_REPORT_DIR}/**/1.json`);
+  const sitespeedReportDir = getAbsolutePath(`${_oup}/**/${DEFAULT_SITESPEED_REPORT_DIR}/**/data/browsertime.summary-localhost.json`);
+
+  const lChildDir = glob.sync(lighthouseReportDir)?.[0]
+  const sChildDir = glob.sync(sitespeedReportDir)?.[0]
+
+  expect(statSync(sChildDir).size).toBeGreaterThan(1000);
+  expect(lChildDir).toBeUndefined()
+
+});
