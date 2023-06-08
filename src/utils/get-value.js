@@ -4,6 +4,8 @@ import {
 } from 'fs-extra';
 import { resolve } from 'path';
 import { parse } from 'url';
+import _ from 'lodash';
+
 import {
   CWD,
   METRICS_LIGHTHOUSE_MAP,
@@ -11,6 +13,21 @@ import {
   SITESPEED_JSON_RESULT_DIR
 } from '../const';
 import { logger } from './log';
+
+export function isValidNumber(value) {
+  return _.isNumber(+value) && !_.isNaN(+value) && !_.isNil(value);
+}
+
+export function getValueRange(value, bestValue, worstValue) {
+  if (!isValidNumber(value)) {
+    return '';
+  } if (value < bestValue) {
+    return 'good';
+  } if (value > worstValue) {
+    return 'bad';
+  }
+  return 'middle';
+}
 
 export function getAbsolutePath(_path) {
   return resolve(CWD, _path);
@@ -63,6 +80,37 @@ export function getSitespeedReportPath(parentPath, name) {
   const dir = `${parentPath}/${name}`;
   ensureDirSync(dir);
   return dir;
+}
+
+/**
+ * 计算数组百分位数
+ * @param {Array} arr 数组
+ * @param {Number} percentile 百分位数，范围 0-100
+ */
+export function getArrPercentile(arr, percentile) {
+  if (!Array.isArray(arr) || arr.length === 0) {
+    return undefined;
+  }
+
+  let sortedArr = arr.slice().sort((a, b) => a - b);
+  let len = sortedArr.length;
+
+  // 计算索引位置
+  const fraction = (len * percentile) / 100;
+  let index = Math.floor(fraction);
+
+  // 处理一些边界情况
+  if (index >= len) {
+    return sortedArr[len - 1];
+  }
+  if (index <= 0) {
+    return sortedArr[0];
+  }
+  if (len < 2) {
+    return sortedArr[0];
+  }
+
+  return sortedArr[index];
 }
 
 export function json2CliOptions(params) {
@@ -141,8 +189,6 @@ export function getLighthouseWebVitals(lighthouseResultList = []) {
   const metricsList = Object.keys(METRICS_LIGHTHOUSE_MAP);
   const allUrls = Object.keys(lighthouseResultList);
 
-  // console.log('lighthouseResultList', lighthouseResultList);
-
   return allUrls
     .reduce((pre, key)=>{
       // 每个url的数组
@@ -168,8 +214,10 @@ export function getLighthouseWebVitals(lighthouseResultList = []) {
                 [metricsKey]: +(audits[name]?.numericValue?.toFixed(3) ?? -0.1)
               };
             }, {});
-        })
-        // 把所有结果相同指标合并
+        });
+
+      const avgMetircs = currentUrlMetircs
+        // 把所有结果相同指标相加合并
         .reduce((preValue, currentValue)=>{
           const values = {};
           metricsList.forEach(mts=>{
@@ -179,14 +227,33 @@ export function getLighthouseWebVitals(lighthouseResultList = []) {
           return values;
         }, {});
 
+      // currentUrlMetircs = [{LCP:0,CLS:0,FCP:0,FID:0,FCP:0,SI:0,TBT:0}]
+      const metircsList = currentUrlMetircs.reduce((preValue, currentValue)=>{
+        const values = {};
+        metricsList.forEach(mts=>{
+          const preVal = preValue[mts] || [];
+          values[mts] = [...preVal, currentValue[mts]];
+        });
+        return values;
+      }, {});
+
+      const percentiles = {};
+      Object.keys(metircsList).forEach((metircsKey) => {
+        const arr = metircsList[metircsKey];
+        const percentile75 = getArrPercentile(arr, 75).toFixed(3);
+        const percentile90 = getArrPercentile(arr, 90).toFixed(3);
+        percentiles[`${metircsKey}_75`] = percentile75;
+        percentiles[`${metircsKey}_90`] = percentile90;
+      });
+
       // 单个url 测试的指标取平均值
-      forEach(currentUrlMetircs, (value, metircsKey)=>{
-        currentUrlMetircs[metircsKey] = (value / iterations).toFixed(3);
+      forEach(avgMetircs, (value, metircsKey)=>{
+        avgMetircs[metircsKey] = (value / iterations).toFixed(3);
       });
 
       urlMetrics[key] = {
         url: result.url,
-        metircs: currentUrlMetircs
+        metircs: { ...avgMetircs, ...percentiles }
       };
 
       return urlMetrics;

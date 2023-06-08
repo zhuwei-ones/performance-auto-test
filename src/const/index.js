@@ -21,6 +21,12 @@ export const COLOR_MAP = {
   ORANGE: '#fa3'
 };
 
+export const METRICS_RANGE_MAP = {
+  good: COLOR_MAP.GREEN,
+  bad: COLOR_MAP.RED,
+  middle: COLOR_MAP.ORANGE
+};
+
 export const PERFORMANCE_TOOLS_MAP = {
   LIGHTHOUSE: 'lighthouse',
   SITESPEED: 'sitespeed'
@@ -35,7 +41,7 @@ export const USER_AGENTS = {
 
 export const HEADERS = {
   Cookie:
-      'OauthUserID=605711609;OauthAccessToken=dev.myones.net60571160932529168000;OauthExpires=32529168000'
+    'OauthUserID=605711609;OauthAccessToken=dev.myones.net60571160932529168000;OauthExpires=32529168000'
 };
 
 const METRICS_MAP = {
@@ -78,9 +84,7 @@ export const METRICS_REPORT_MAP = [
   METRICS_MAP.TBT
 ];
 
-export const METRICS_SECOND_UNIT = [
-  METRICS_MAP.CLS
-];
+export const METRICS_SECOND_UNIT = [METRICS_MAP.CLS];
 
 export const METRICS_LIGHTHOUSE_MAP = {
   [METRICS_MAP.LCP]: 'largest-contentful-paint',
@@ -138,7 +142,8 @@ export const LIGHTHOUSE_DEFAULT_CONFIG = {
 
     maxWaitForFcp: 15 * 1000,
     maxWaitForLoad: 35 * 1000,
-    throttling: { // constants.throttling.desktopDense4G,
+    throttling: {
+      // constants.throttling.desktopDense4G,
       rttMs: COMMON_TEST_CONFIG.LATENCY, // Round-Trip Time，往返时延，从发送端发送数据开始，到发送端收到来自接收端的确认
       throughputKbps: KBPS.TEN_M,
       cpuSlowdownMultiplier: COMMON_TEST_CONFIG.CPU_SLOWDOWN,
@@ -164,9 +169,11 @@ export const SITESPEED_DEFAULT_CONFIG = {
   'browsertime.headless': true,
   browser: 'chrome',
   silent: true,
-  requestheader: (()=>{
-    return Object.keys(HEADERS).map(headerName=>{
-      return `${headerName.toLowerCase()}:'${HEADERS[headerName]}'`;
-    }).join(' ');
+  requestheader: (() => {
+    return Object.keys(HEADERS)
+      .map((headerName) => {
+        return `${headerName.toLowerCase()}:'${HEADERS[headerName]}'`;
+      })
+      .join(' ');
   })()
 };

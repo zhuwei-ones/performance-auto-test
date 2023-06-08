@@ -5,20 +5,35 @@ import glob from 'glob';
 import { basename } from 'path';
 import {
   COLOR_MAP,
-  KBPS_NAME, METRICS_REPORT_MAP, METRICS_SECOND_UNIT, METRICS_STANDARD_MAP, PERFORMANCE_TOOLS_MAP
+  KBPS_NAME,
+  METRICS_RANGE_MAP,
+  METRICS_REPORT_MAP,
+  METRICS_SECOND_UNIT,
+  METRICS_STANDARD_MAP,
+  PERFORMANCE_TOOLS_MAP
 } from '../const';
+
+import { getValueRange, isValidNumber } from './get-value';
 import { logger } from './log';
 
-json2md.converters.redText = (input)=> {
+json2md.converters.redText = (input) => {
   return `<font color="${COLOR_MAP.RED}">${input}</font>`;
 };
 
-json2md.converters.greenText = (input)=> {
+json2md.converters.greenText = (input) => {
   return `<font color="${COLOR_MAP.GREEN}">${input}</font>`;
 };
 
-json2md.converters.orangeText = (input)=> {
+json2md.converters.orangeText = (input) => {
   return `<font color="${COLOR_MAP.ORANGE}">${input}</font>`;
+};
+
+json2md.converters.textList = (list) => {
+  const result = list.map(item=>{
+    return `<font color="${METRICS_RANGE_MAP[item.type]}">${item.input}</font><br>`;
+  }).join('');
+
+  return `<div>${result}</div>`;
 };
 
 const getHtmlResult = ({ bodyStr, title }) => {
@@ -46,7 +61,10 @@ const getHtmlResult = ({ bodyStr, title }) => {
   `;
 };
 
-export const getReportConclusion = ({ performanceResultList, metricsConfig })=>{
+export const getReportConclusion = ({
+  performanceResultList,
+  metricsConfig
+}) => {
   // 总的是否通过
   // 链接表格 具体那个不通过
   const content = [];
@@ -57,14 +75,14 @@ export const getReportConclusion = ({ performanceResultList, metricsConfig })=>{
   const oneTool = performanceResultList[oneToolName];
   const allUrls = Object.keys(oneTool);
 
-  allUrls.forEach(urlKey=>{
+  allUrls.forEach((urlKey) => {
     const urlData = oneTool[urlKey];
     const obj = [];
 
     obj.push(urlData.url);
 
-    allTools.forEach((tool)=>{
-      const isUnApprove = METRICS_STANDARD_MAP.some(metricsKey=>{
+    allTools.forEach((tool) => {
+      const isUnApprove = METRICS_STANDARD_MAP.some((metricsKey) => {
         const pageData = performanceResultList[tool][urlKey];
         let pageMetrics = pageData?.metircs?.[metricsKey];
         const metricsLowerKey = metricsKey.toLowerCase();
@@ -97,7 +115,10 @@ export const getReportConclusion = ({ performanceResultList, metricsConfig })=>{
   ];
 };
 
-export const getToolCompareTableData = ({ performanceResultList, metricsConfig })=>{
+export const getToolCompareTableData = ({
+  performanceResultList,
+  metricsConfig
+}) => {
   const content = [];
 
   const { good: goodMetrics, bad: badMetrics } = metricsConfig;
@@ -109,10 +130,10 @@ export const getToolCompareTableData = ({ performanceResultList, metricsConfig }
   const oneTool = performanceResultList[oneToolName];
   const allUrls = Object.keys(oneTool);
 
-  allUrls.forEach(urlKey=>{
+  allUrls.forEach((urlKey) => {
     const urlData = oneTool[urlKey];
 
-    allTools.forEach((tool, index)=>{
+    allTools.forEach((tool, index) => {
       const obj = [];
       if (index === 0) {
         obj.push(urlData.url);
@@ -122,40 +143,60 @@ export const getToolCompareTableData = ({ performanceResultList, metricsConfig }
 
       obj.push(tool);
 
-      METRICS_REPORT_MAP.forEach(metricsKey=>{
+      METRICS_REPORT_MAP.forEach((metricsKey) => {
         const pageData = performanceResultList[tool][urlKey];
-        let pageMetrics = pageData?.metircs?.[metricsKey];
+        let pageMetrics = {};
+        let pageMetricsAvg = pageData?.metircs?.[metricsKey];
+        let pageMetrics75 = pageData?.metircs?.[`${metricsKey}_75`];
+        let pageMetrics90 = pageData?.metircs?.[`${metricsKey}_90`];
         const metricsLowerKey = metricsKey.toLowerCase();
         const goodMetricsVal = goodMetrics[metricsLowerKey];
         const badMetricsVal = badMetrics[metricsLowerKey];
 
-        if (typeof pageMetrics !== 'undefined') {
+        if (typeof pageMetricsAvg !== 'undefined') {
           // 如果不是 s 单位的，就需要除1000
           if (!METRICS_SECOND_UNIT.includes(metricsKey)) {
-            pageMetrics = (pageMetrics / 1000).toFixed(3);
+            pageMetricsAvg = (pageMetricsAvg / 1000).toFixed(3);
+            pageMetrics75 = (pageMetrics75 / 1000).toFixed(3);
+            pageMetrics90 = (pageMetrics90 / 1000).toFixed(3);
           }
-          const isBest = goodMetricsVal && goodMetricsVal / 1000 >= pageMetrics;
-          const isWorst = badMetricsVal && badMetricsVal / 1000 <= pageMetrics;
-          const isMiddle = badMetricsVal
-                          && goodMetricsVal
-                          && goodMetricsVal / 1000 < pageMetrics
-                          && badMetricsVal / 1000 > pageMetrics;
 
-          pageMetrics = `${pageMetrics} s`;
+          const goodMetricsMSVal = goodMetricsVal / 1000;
+          const badMetricsMSVal = badMetricsVal / 1000;
+          const metricsAvgRange = getValueRange(pageMetricsAvg, goodMetricsMSVal, badMetricsMSVal);
+          const metrics75Range = getValueRange(pageMetrics75, goodMetricsMSVal, badMetricsMSVal);
+          const metrics90Range = getValueRange(pageMetrics90, goodMetricsMSVal, badMetricsMSVal);
 
-          if (isBest) {
-            pageMetrics = {
-              greenText: pageMetrics
-            };
-          } else if (isWorst) {
-            pageMetrics = {
-              redText: pageMetrics
-            };
-          } else if (isMiddle) {
-            pageMetrics = {
-              orangeText: pageMetrics
-            };
+          const pageMetricsAvgUnit = `AVG: ${pageMetricsAvg} s`;
+          const pageMetrics75Unit = `P75: ${pageMetrics75} s`;
+          const pageMetrics90Unit = `P90: ${pageMetrics90} s`;
+
+          const textList = [];
+
+          if (isValidNumber(pageMetricsAvg)) {
+            textList.push({
+              type: metricsAvgRange,
+              input: pageMetricsAvgUnit
+            });
           }
+
+          if (isValidNumber(pageMetrics75)) {
+            textList.push({
+              type: metrics75Range,
+              input: pageMetrics75Unit
+            });
+          }
+
+          if (isValidNumber(pageMetrics90)) {
+            textList.push({
+              type: metrics90Range,
+              input: pageMetrics90Unit
+            });
+          }
+
+          pageMetrics = {
+            textList: textList
+          };
         } else {
           pageMetrics = '-';
         }
@@ -174,29 +215,43 @@ export const getToolCompareTableData = ({ performanceResultList, metricsConfig }
   };
 };
 
-export const getMetricsStandardDataTable = (metricsConfig)=>{
+export const getMetricsStandardDataTable = (metricsConfig) => {
   const { good, bad } = metricsConfig;
 
   return {
     table: {
       headers: ['', ...METRICS_STANDARD_MAP],
       rows: [
-        [{ greenText: '最优' }, ...METRICS_STANDARD_MAP.map(key=>{ return `${good[key.toLowerCase()]} ms`; })],
-        [{ redText: '最差' }, ...METRICS_STANDARD_MAP.map(key=>{ return `${bad[key.toLowerCase()]} ms`; })]
+        [
+          { greenText: '最优' },
+          ...METRICS_STANDARD_MAP.map((key) => {
+            return `${good[key.toLowerCase()]} ms`;
+          })
+        ],
+        [
+          { redText: '最差' },
+          ...METRICS_STANDARD_MAP.map((key) => {
+            return `${bad[key.toLowerCase()]} ms`;
+          })
+        ]
       ]
     }
   };
 };
 
-export const getLighthouseReportLinks = ({ toolOutputPath, outputPath, result })=>{
+export const getLighthouseReportLinks = ({
+  toolOutputPath,
+  outputPath,
+  result
+}) => {
   const reportUrls = {};
   const urlDirs = glob.sync(`${toolOutputPath}/*`);
 
-  urlDirs.forEach(dir=>{
+  urlDirs.forEach((dir) => {
     const htmlList = glob.sync(`${dir}/*.html`);
     const url = dir.match(/.+\/(.[^/]+)$/)?.[1];
 
-    reportUrls[url] = htmlList.map((item, index)=>{
+    reportUrls[url] = htmlList.map((item, index) => {
       return {
         link: {
           title: `run-${index + 1}`,
@@ -206,44 +261,51 @@ export const getLighthouseReportLinks = ({ toolOutputPath, outputPath, result })
     });
   });
 
-  const content = Object.keys(reportUrls).map(urlKey=>{
+  const content = Object.keys(reportUrls).map((urlKey) => {
     const reportUrl = reportUrls[urlKey] || [];
-    return [
-      result[urlKey]?.url,
-      ...reportUrl
-    ];
+    return [result[urlKey]?.url, ...reportUrl];
   });
   return {
     table: {
-      headers: ['测试页面', '测试结果', ...new Array(content?.[0]?.slice(2).length).fill('')],
+      headers: [
+        '测试页面',
+        '测试结果',
+        ...new Array(content?.[0]?.slice(2).length).fill('')
+      ],
       rows: content
     }
   };
 };
 
-export const getSitespeedReportLinks = ({ toolOutputPath, outputPath, result })=>{
+export const getSitespeedReportLinks = ({
+  toolOutputPath,
+  outputPath,
+  result
+}) => {
   const reportUrls = {};
   const urlDirs = glob.sync(`${toolOutputPath}/*`);
 
-  urlDirs.forEach(dir=>{
+  urlDirs.forEach((dir) => {
     const htmlList = glob.sync(`${dir}/pages/**/*.html`);
     const url = dir.match(/.+\/(.[^/]+)$/)?.[1];
 
-    reportUrls[url] = htmlList.map((item, index)=>{
-      const htmlName = basename(item, 'html');
-      const urlName = +htmlName;
+    reportUrls[url] = htmlList
+      .map((item, index) => {
+        const htmlName = basename(item, 'html');
+        const urlName = +htmlName;
 
-      if (Number.isNaN(urlName)) {
-        return null;
-      }
-
-      return {
-        link: {
-          title: `run-${index + 1}`,
-          source: `${item.replace(`${outputPath}/`, '')}`
+        if (Number.isNaN(urlName)) {
+          return null;
         }
-      };
-    }).filter(e=>e);
+
+        return {
+          link: {
+            title: `run-${index + 1}`,
+            source: `${item.replace(`${outputPath}/`, '')}`
+          }
+        };
+      })
+      .filter((e) => e);
 
     reportUrls[url] = [
       {
@@ -256,44 +318,58 @@ export const getSitespeedReportLinks = ({ toolOutputPath, outputPath, result })=
     ];
   });
 
-  const content = Object.keys(reportUrls).map(urlKey=>{
+  const content = Object.keys(reportUrls).map((urlKey) => {
     const reportUrl = reportUrls[urlKey] || [];
-    return [
-      result[urlKey]?.url,
-      ...reportUrl
-    ];
+    return [result[urlKey]?.url, ...reportUrl];
   });
 
   return {
     table: {
-      headers: ['测试页面', '测试结果', ...new Array(content?.[0]?.slice(2).length).fill('')],
+      headers: [
+        '测试页面',
+        '测试结果',
+        ...new Array(content?.[0]?.slice(2).length).fill('')
+      ],
       rows: content
     }
   };
 };
 
-export const getTestEnvTableData = (options)=>{
+export const getTestEnvTableData = (options) => {
   const {
-    testTime, testTools, userAgent, downloadKbps, uploadKbps, width, height, latency, iterations
+    testTime,
+    testTools,
+    userAgent,
+    downloadKbps,
+    uploadKbps,
+    width,
+    height,
+    latency,
+    iterations
   } = options;
 
   const TestEnvHeader = [
     {
       title: '测试时间',
       value: testTime.toLocaleString()
-    }, {
+    },
+    {
       title: '测试工具',
       value: testTools.join('、')
-    }, {
+    },
+    {
       title: '网络状态',
       value: `上传速度：${KBPS_NAME[downloadKbps]}，下载速度${KBPS_NAME[uploadKbps]}，延迟：${latency}ms`
-    }, {
+    },
+    {
       title: '浏览器信息',
       value: userAgent
-    }, {
+    },
+    {
       title: '浏览器尺寸',
       value: `${width}x${height}`
-    }, {
+    },
+    {
       title: '测试次数',
       value: iterations
     }
@@ -302,11 +378,8 @@ export const getTestEnvTableData = (options)=>{
   const TableHeader = ['-', '-'];
   const TableContent = [];
 
-  TestEnvHeader.forEach((item)=>{
-    TableContent.push([
-      item.title,
-      item.value
-    ]);
+  TestEnvHeader.forEach((item) => {
+    TableContent.push([item.title, item.value]);
   });
 
   return {
@@ -322,18 +395,21 @@ const TOOL_REPORT_LINK_FUNC_MAP = {
   [PERFORMANCE_TOOLS_MAP.SITESPEED]: getSitespeedReportLinks
 };
 
-export const createPerformanceReport = (performanceResultList, options)=>{
+export const createPerformanceReport = (performanceResultList, options) => {
   const {
     outputPath,
     metricsConfig,
-    setting, testTime, testTools, iterations
+    setting,
+    testTime,
+    testTools,
+    iterations
   } = options;
 
   const json = [];
 
   // console.log('performanceResultList--->', performanceResultList);
 
-  const performanceResultMap = performanceResultList.reduce((pre, current)=>{
+  const performanceResultMap = performanceResultList.reduce((pre, current) => {
     return {
       ...pre,
       [current.type]: current.result
@@ -342,38 +418,52 @@ export const createPerformanceReport = (performanceResultList, options)=>{
 
   json.push({ h1: '性能测试报告' });
 
-  json.push(getReportConclusion({
-    performanceResultList: performanceResultMap,
-    metricsConfig
-  }));
+  json.push(
+    getReportConclusion({
+      performanceResultList: performanceResultMap,
+      metricsConfig
+    })
+  );
 
   json.push({ h3: '测试环境' });
-  json.push(getTestEnvTableData({
-    ...setting, testTime, testTools, iterations
-  }));
+  json.push(
+    getTestEnvTableData({
+      ...setting,
+      testTime,
+      testTools,
+      iterations
+    })
+  );
 
   json.push({ h3: '指标标准' });
   json.push(getMetricsStandardDataTable(metricsConfig));
 
   json.push({ h3: '性能测试工具结果对比报告' });
-  json.push(getToolCompareTableData({
-    performanceResultList: performanceResultMap,
-    metricsConfig
-  }));
+  json.push(
+    getToolCompareTableData({
+      performanceResultList: performanceResultMap,
+      metricsConfig
+    })
+  );
 
-  performanceResultList.forEach((item)=>{
+  performanceResultList.forEach((item) => {
     const { type, result } = item;
     const getToolReportLinkFunc = TOOL_REPORT_LINK_FUNC_MAP[type];
 
     json.push({ h3: `${type} 具体报告` });
-    json.push(getToolReportLinkFunc({
-      toolOutputPath: options[`${type}Options`].outputPath,
-      outputPath,
-      result
-    }));
+    json.push(
+      getToolReportLinkFunc({
+        toolOutputPath: options[`${type}Options`].outputPath,
+        outputPath,
+        result
+      })
+    );
   });
 
-  logger.info('report result json--->', JSON.stringify(json, null, { space: 2 }));
+  logger.info(
+    'report result json--->',
+    JSON.stringify(json, null, { space: 2 })
+  );
 
   const content = json2md(json);
 
