@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0-alpha.4](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.1.0-alpha.3...v1.1.0-alpha.4) (2023-06-08)
+
+
+### Features
+
+* 报告支持输出 P75 和 P90 ([0d5f567](https://github.com/zhuwei-ones/performance-auto-test/commit/0d5f5672bbaac5d1ba1acc67d37f041254c6cbce))
+
 ## [1.1.0-alpha.3](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.1.0-alpha.2...v1.1.0-alpha.3) (2023-06-07)
 
 
