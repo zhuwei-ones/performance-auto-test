@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0-alpha.5](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.1.0-alpha.4...v1.1.0-alpha.5) (2023-06-09)
+
+
+### Features
+
+* 支持报告添加测试波动折线图 ([5ce2d44](https://github.com/zhuwei-ones/performance-auto-test/commit/5ce2d4420aab737d4f5c3f2d9d7fd19cc7c70e84))
+
 ## [1.1.0-alpha.4](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.1.0-alpha.3...v1.1.0-alpha.4) (2023-06-08)
 
 
