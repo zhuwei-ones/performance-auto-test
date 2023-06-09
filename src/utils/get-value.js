@@ -1,6 +1,10 @@
 import { forEach } from 'lodash';
 import {
-  ensureDirSync, ensureFileSync, pathExistsSync, readFileSync, readJsonSync
+  ensureDirSync,
+  ensureFileSync,
+  pathExistsSync,
+  readFileSync,
+  readJsonSync
 } from 'fs-extra';
 import { resolve } from 'path';
 import { parse } from 'url';
@@ -19,11 +23,17 @@ export function isValidNumber(value) {
 }
 
 export function getValueRange(value, bestValue, worstValue) {
-  if (!isValidNumber(value)) {
+  if (
+    !isValidNumber(value)
+    || !isValidNumber(bestValue)
+    || !isValidNumber(worstValue)
+  ) {
     return '';
-  } if (value < bestValue) {
+  }
+  if (value < bestValue) {
     return 'good';
-  } if (value > worstValue) {
+  }
+  if (value > worstValue) {
     return 'bad';
   }
   return 'middle';
@@ -97,7 +107,7 @@ export function getArrPercentile(arr, percentile) {
 
   // 计算索引位置
   const fraction = (len * percentile) / 100;
-  let index = Math.floor(fraction);
+  let index = Math.ceil(fraction);
 
   // 处理一些边界情况
   if (index >= len) {
@@ -110,7 +120,7 @@ export function getArrPercentile(arr, percentile) {
     return sortedArr[0];
   }
 
-  return sortedArr[index];
+  return sortedArr[index - 1];
 }
 
 export function json2CliOptions(params) {
@@ -162,10 +172,7 @@ export function getKeypathFromUrl(url, includeQueryParams, useHash, group) {
 
   let path = toSafeKey(newUrl.pathname);
 
-  path = joinNonEmpty(
-    [path, toSafeKey(flattenQueryParams(newUrl.query))],
-    '_'
-  );
+  path = joinNonEmpty([path, toSafeKey(flattenQueryParams(newUrl.query))], '_');
   path = joinNonEmpty([path, toSafeKey(newUrl.hash)], '_');
 
   const keys = [toSafeKey(group || newUrl.host), path];
@@ -189,75 +196,73 @@ export function getLighthouseWebVitals(lighthouseResultList = []) {
   const metricsList = Object.keys(METRICS_LIGHTHOUSE_MAP);
   const allUrls = Object.keys(lighthouseResultList);
 
-  return allUrls
-    .reduce((pre, key)=>{
-      // 每个url的数组
+  return allUrls.reduce((pre, key) => {
+    // 每个url的数组
 
-      const result = lighthouseResultList[key];
-      const resultList = result?.resultList || [];
-      const urlMetrics = pre;
-      const iterations = resultList.length;
+    const result = lighthouseResultList[key];
+    const resultList = result?.resultList || [];
+    const urlMetrics = pre;
+    const iterations = resultList.length;
 
-      const currentUrlMetircs = resultList
-        // 性能结果对象数组 精简成 6大性能指标数组
-        .map((re)=>{
-          const audits = re;
+    const currentUrlMetircs = resultList
+      // 性能结果对象数组 精简成 6大性能指标数组
+      .map((re) => {
+        const audits = re;
 
-          // console.log('audits', audits);
+        // console.log('audits', audits);
 
-          // 把6大性能指标提取出来
-          return metricsList
-            .reduce((preValue, metricsKey)=>{
-              const name = METRICS_LIGHTHOUSE_MAP[metricsKey];
-              return {
-                ...preValue,
-                [metricsKey]: +(audits[name]?.numericValue?.toFixed(3) ?? -0.1)
-              };
-            }, {});
-        });
-
-      const avgMetircs = currentUrlMetircs
-        // 把所有结果相同指标相加合并
-        .reduce((preValue, currentValue)=>{
-          const values = {};
-          metricsList.forEach(mts=>{
-            const preVal = preValue[mts] || 0;
-            values[mts] = preVal + currentValue[mts];
-          });
-          return values;
+        // 把6大性能指标提取出来
+        return metricsList.reduce((preValue, metricsKey) => {
+          const name = METRICS_LIGHTHOUSE_MAP[metricsKey];
+          return {
+            ...preValue,
+            [metricsKey]: +(audits[name]?.numericValue?.toFixed(3) ?? -0.1)
+          };
         }, {});
+      });
 
-      // currentUrlMetircs = [{LCP:0,CLS:0,FCP:0,FID:0,FCP:0,SI:0,TBT:0}]
-      const metircsList = currentUrlMetircs.reduce((preValue, currentValue)=>{
+    const avgMetircs = currentUrlMetircs
+      // 把所有结果相同指标相加合并
+      .reduce((preValue, currentValue) => {
         const values = {};
-        metricsList.forEach(mts=>{
-          const preVal = preValue[mts] || [];
-          values[mts] = [...preVal, currentValue[mts]];
+        metricsList.forEach((mts) => {
+          const preVal = preValue[mts] || 0;
+          values[mts] = preVal + currentValue[mts];
         });
         return values;
       }, {});
 
-      const percentiles = {};
-      Object.keys(metircsList).forEach((metircsKey) => {
-        const arr = metircsList[metircsKey];
-        const percentile75 = getArrPercentile(arr, 75).toFixed(3);
-        const percentile90 = getArrPercentile(arr, 90).toFixed(3);
-        percentiles[`${metircsKey}_75`] = percentile75;
-        percentiles[`${metircsKey}_90`] = percentile90;
+    // currentUrlMetircs = [{LCP:0,CLS:0,FCP:0,FID:0,FCP:0,SI:0,TBT:0}]
+    const metircsAllList = currentUrlMetircs.reduce((preValue, currentValue) => {
+      const values = {};
+      metricsList.forEach((mts) => {
+        const preVal = preValue[mts] || [];
+        values[mts] = [...preVal, currentValue[mts]];
       });
-
-      // 单个url 测试的指标取平均值
-      forEach(avgMetircs, (value, metircsKey)=>{
-        avgMetircs[metircsKey] = (value / iterations).toFixed(3);
-      });
-
-      urlMetrics[key] = {
-        url: result.url,
-        metircs: { ...avgMetircs, ...percentiles }
-      };
-
-      return urlMetrics;
+      return values;
     }, {});
+
+    const percentiles = {};
+    Object.keys(metircsAllList).forEach((metircsKey) => {
+      const arr = metircsAllList[metircsKey];
+      const percentile75 = getArrPercentile(arr, 75).toFixed(3);
+      const percentile90 = getArrPercentile(arr, 90).toFixed(3);
+      percentiles[`${metircsKey}_75`] = percentile75;
+      percentiles[`${metircsKey}_90`] = percentile90;
+    });
+
+    // 单个url 测试的指标取平均值
+    forEach(avgMetircs, (value, metircsKey) => {
+      avgMetircs[metircsKey] = (value / iterations).toFixed(3);
+    });
+
+    urlMetrics[key] = {
+      url: result.url,
+      metircs: { ...avgMetircs, ...percentiles }
+    };
+
+    return urlMetrics;
+  }, {});
 }
 
 export function readSitespeedJsonReport(dir) {
@@ -277,26 +282,25 @@ export function getSitespeedWebVitals(sitespeedResultList) {
 
   // console.log('sitespeedResultList', sitespeedResultList);
 
-  return allUrls
-    .reduce((pre, url)=>{
-      const result = sitespeedResultList[url];
-      const resultList = result?.resultList || [];
-      const googleWebVitals = resultList?.[0].googleWebVitals;
-      const urlMetrics = pre;
+  return allUrls.reduce((pre, url) => {
+    const result = sitespeedResultList[url];
+    const resultList = result?.resultList || [];
+    const googleWebVitals = resultList?.[0].googleWebVitals;
+    const urlMetrics = pre;
 
-      const currentUrlMetircs = metricsList.reduce((preInfo, mtsKey)=>{
-        const googleWebVitalsKey = METRICS_SITESPEED_MAP[mtsKey];
-        return {
-          ...preInfo,
-          [mtsKey]: googleWebVitals?.[googleWebVitalsKey]?.median ?? -0.1
-        };
-      }, {});
-
-      urlMetrics[url] = {
-        url: result.url,
-        metircs: currentUrlMetircs
+    const currentUrlMetircs = metricsList.reduce((preInfo, mtsKey) => {
+      const googleWebVitalsKey = METRICS_SITESPEED_MAP[mtsKey];
+      return {
+        ...preInfo,
+        [mtsKey]: googleWebVitals?.[googleWebVitalsKey]?.median ?? -0.1
       };
-
-      return urlMetrics;
     }, {});
+
+    urlMetrics[url] = {
+      url: result.url,
+      metircs: currentUrlMetircs
+    };
+
+    return urlMetrics;
+  }, {});
 }

@@ -30,7 +30,7 @@ json2md.converters.orangeText = (input) => {
 
 json2md.converters.textList = (list) => {
   const result = list.map(item=>{
-    return `<font color="${METRICS_RANGE_MAP[item.type]}">${item.input}</font><br>`;
+    return `<font color="${METRICS_RANGE_MAP[item.type] || '#999'}">${item.input}</font><br>`;
   }).join('');
 
   return `<div>${result}</div>`;
