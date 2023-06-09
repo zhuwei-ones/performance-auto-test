@@ -1,11 +1,13 @@
 import {
   getAbsolutePath,
   getAllOptionsWithDefaultValue,
+  getArrPercentile,
   getKeypathFromUrl,
   getLighthouseWebVitals,
   getOutputPath,
   getSitespeedCommand,
   getSitespeedWebVitals,
+  getValueRange,
   verifyOptions,
 } from "../src/utils";
 
@@ -545,4 +547,18 @@ describe("get value", () => {
       },
     });
   });
+
+
+  test("getArrPercentile",()=>{
+    expect(getArrPercentile([1,2,3,4,5,6,7,8,9,10],75)).toBe(8)
+    expect(getArrPercentile([10,1,2,5,6,3,4,8,9,7],90)).toBe(9)
+  })
+
+  test("getValueRange",()=>{
+    expect(getValueRange(0.5,0.2,0.9)).toEqual("middle")
+    expect(getValueRange(0.1,0.2,0.9)).toEqual("good")
+    expect(getValueRange(1,0.2,0.9)).toEqual("bad")
+    expect(getValueRange(undefined,0.2,0.9)).toEqual("")
+    expect(getValueRange(1,undefined,0.9)).toEqual("")
+  })
 });

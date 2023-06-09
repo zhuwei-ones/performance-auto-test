@@ -7,14 +7,11 @@ import {
   getToolCompareTableData,
 } from "../src/utils";
 
-
-const outputPathParent = getAbsolutePath("test-output")
-
+const outputPathParent = getAbsolutePath("test-output");
 
 afterAll(() => {
   removeSync(outputPathParent);
 });
-
 
 describe("Test MD DOC", () => {
   test("Test util", async () => {
@@ -67,8 +64,8 @@ describe("Test MD DOC", () => {
               metircs: {
                 CLS: 0,
                 FCP: 980,
-                FID: 0,
                 LCP: 1315,
+                FID: 0,
                 TBT: 3,
                 TTFB: 722,
                 TTI: 0,
@@ -108,18 +105,54 @@ describe("Test MD DOC", () => {
             "http://baidu.com",
             "lighthouse",
             {
-              orangeText: "1.315 s",
+              textList: [
+                {
+                  input: "AVG: 1.315 s",
+                  type: "middle",
+                },
+              ],
             },
             {
-              greenText: "0 s",
+              textList: [
+                {
+                  input: "AVG: 0 s",
+                  type: "good",
+                },
+              ],
             },
             {
-              greenText: "0.000 s",
+              textList: [
+                {
+                  input: "AVG: 0.000 s",
+                  type: "good",
+                },
+              ],
             },
-            "0.980 s",
+            {
+              textList: [
+                {
+                  input: "AVG: 0.980 s",
+                  type: "",
+                },
+              ],
+            },
             "-",
-            "0.000 s",
-            "0.003 s",
+            {
+              textList: [
+                {
+                  input: "AVG: 0.000 s",
+                  type: "",
+                },
+              ],
+            },
+            {
+              textList: [
+                {
+                  input: "AVG: 0.003 s",
+                  type: "",
+                },
+              ],
+            },
           ],
         ],
       },
@@ -148,15 +181,15 @@ describe("Test MD DOC", () => {
         },
       ],
       {
-        outputPath:outputPathParent,
-        testTime:new Date(),
-        testTools:['lighthouse'],
-        setting:{
-          userAgent:"xxxx",
+        outputPath: outputPathParent,
+        testTime: new Date(),
+        testTools: ["lighthouse"],
+        setting: {
+          userAgent: "xxxx",
         },
-        iterations:3,
+        iterations: 3,
         lighthouseOptions: {
-          outputPath:"output/lighthouse"
+          outputPath: "output/lighthouse",
         },
         metricsConfig: {
           good: {
@@ -175,7 +208,8 @@ describe("Test MD DOC", () => {
 
     expect(reportPath).toEqual(`${outputPathParent}/report.html`);
 
-    expect(statSync(`${outputPathParent}/report.html`).size).toBeGreaterThan(1000)
-    
+    expect(statSync(`${outputPathParent}/report.html`).size).toBeGreaterThan(
+      1000
+    );
   });
 });
