@@ -6,6 +6,7 @@ import { basename } from 'path';
 import {
   COLOR_MAP,
   KBPS_NAME,
+  METRICS_MAP,
   METRICS_RANGE_MAP,
   METRICS_REPORT_MAP,
   METRICS_SECOND_UNIT,
@@ -15,6 +16,7 @@ import {
 
 import { getValueRange, isValidNumber } from './get-value';
 import { logger } from './log';
+import { getLineChartSvg } from './common';
 
 json2md.converters.redText = (input) => {
   return `<font color="${COLOR_MAP.RED}">${input}</font>`;
@@ -215,6 +217,40 @@ export const getToolCompareTableData = ({
   };
 };
 
+export const getToolCompareChartImg = (data)=>{
+  const {
+    result, outputPath, type, metricsType
+  } = data;
+  const urls = Object.keys(result);
+
+  const listData = [];
+
+  for (let i = 0; i < urls.length; i += 1) {
+    const urlKey = urls[i];
+    const urlItemData = result[urlKey];
+    const { url, metircs } = urlItemData;
+    const metricsData = metircs[`${metricsType}List`];
+
+    if (!metricsData || metricsData.length === 0) {
+      return '';
+    }
+
+    listData.push({
+      data: metricsData,
+      name: url
+    });
+  }
+
+  const path = getLineChartSvg({
+    list: listData,
+    title: metricsType,
+    outputPath: outputPath,
+    name: `${type}-${metricsType}`
+  });
+
+  return { img: { title: 'My image title', source: path, alt: 'My image alt' } };
+};
+
 export const getMetricsStandardDataTable = (metricsConfig) => {
   const { good, bad } = metricsConfig;
 
@@ -407,7 +443,7 @@ export const createPerformanceReport = (performanceResultList, options) => {
 
   const json = [];
 
-  // console.log('performanceResultList--->', performanceResultList);
+  // console.log('performanceResultList--->', JSON.stringify(performanceResultList));
 
   const performanceResultMap = performanceResultList.reduce((pre, current) => {
     return {
@@ -458,6 +494,18 @@ export const createPerformanceReport = (performanceResultList, options) => {
         result
       })
     );
+
+    const lcpSvg = getToolCompareChartImg({ ...item, outputPath, metricsType: METRICS_MAP.LCP });
+    const clsSvg = getToolCompareChartImg({ ...item, outputPath, metricsType: METRICS_MAP.CLS });
+    const fidSvg = getToolCompareChartImg({ ...item, outputPath, metricsType: METRICS_MAP.FID });
+
+    if (lcpSvg || clsSvg || fidSvg) {
+      json.push({ h4: `${type} 折线图` });
+    }
+
+    json.push(lcpSvg);
+    json.push(clsSvg);
+    json.push(fidSvg);
   });
 
   logger.info(

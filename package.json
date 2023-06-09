@@ -76,6 +76,7 @@
   "dependencies": {
     "async": "^3.2.4",
     "chrome-launcher": "^0.15.1",
+    "echarts": "^5.4.2",
     "fs-extra": "^11.1.0",
     "glob": "^8.1.0",
     "joi": "^17.7.0",

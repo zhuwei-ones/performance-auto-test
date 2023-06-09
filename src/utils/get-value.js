@@ -249,6 +249,7 @@ export function getLighthouseWebVitals(lighthouseResultList = []) {
       const percentile90 = getArrPercentile(arr, 90).toFixed(3);
       percentiles[`${metircsKey}_75`] = percentile75;
       percentiles[`${metircsKey}_90`] = percentile90;
+      percentiles[`${metircsKey}List`] = arr;
     });
 
     // 单个url 测试的指标取平均值

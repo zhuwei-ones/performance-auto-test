@@ -44,7 +44,7 @@ export const HEADERS = {
     'OauthUserID=605711609;OauthAccessToken=dev.myones.net60571160932529168000;OauthExpires=32529168000'
 };
 
-const METRICS_MAP = {
+export const METRICS_MAP = {
   LCP: 'LCP',
   CLS: 'CLS',
   FID: 'FID',
