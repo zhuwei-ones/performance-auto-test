@@ -1,7 +1,6 @@
 import { statSync, writeFileSync } from 'fs-extra';
 const echarts = require('echarts');
 
-console.log('echarts', echarts);
 export function debounce(cb, delay = 250) {
   let timeout;
 

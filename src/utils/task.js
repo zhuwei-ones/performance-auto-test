@@ -21,18 +21,18 @@ export async function runTask(func, { options, lifecycles } = {}) {
     onDone, onError, onBegin, onEnd
   } = lifecycles;
 
-  const { tool, url } = options;
+  const { tool, url, index } = options;
 
   try {
     onBegin?.({ tool, url });
-    logger.info(`${tool} 开始测试 ${url}}`);
+    logger.info(`${tool} 开始第${index} 次测试 ${url}} `);
     const result = await func();
     onDone?.({ tool, url });
-    logger.success(`${tool} 测试 ${url}} 完成`);
+    logger.success(`${tool} 测试 ${url}} ，第${index} 次完成`);
     return result;
   } catch (error) {
     onError?.(error);
-    logger.error(`${tool} 测试 ${url}} 失败`, error);
+    logger.error(`${tool} 测试第${index} 次 ${url}} 失败`, error);
     throw error;
   } finally {
     onEnd?.({ tool });
@@ -80,7 +80,7 @@ export async function runPerformanceTasks(taskList, lifecycles = {}) {
                     resultList: [...(preUrlTestResult?.[urlKey]?.resultList || []), runnerResult]
                   }
                 };
-              }, { options: { tool: type, url }, lifecycles });
+              }, { options: { tool: type, url, index }, lifecycles });
             };
           })
         );
