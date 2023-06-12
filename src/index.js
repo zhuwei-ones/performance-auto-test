@@ -30,6 +30,10 @@ async function PerformanceTest(options) {
       });
     }
     logger.success('性能报告输出成功');
+
+    setTimeout(()=>{
+      process.exit();
+    }, 2000);
   } catch (error) {
     logger.error('性能报告输出失败', error);
     throw error;
