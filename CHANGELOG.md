@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0-alpha.8](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.1.0-alpha.6...v1.1.0-alpha.8) (2023-06-12)
+
+
+### Bug Fixes
+
+* 程序运行无法退出，强制退！ ([02fd317](https://github.com/zhuwei-ones/performance-auto-test/commit/02fd31777089ff269d805bb4d9835baa902a6bd5))
+
 ## [1.1.0-alpha.7](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.1.0-alpha.6...v1.1.0-alpha.7) (2023-06-12)
 
 
