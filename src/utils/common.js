@@ -50,11 +50,11 @@ export function getLineChartSvg({
     series: list.map(item=>{
       return {
         ...item,
-        type: 'line',
-        label: {
-          show: true,
-          position: 'top'
-        }
+        type: 'line'
+        // label: {
+        //   show: true,
+        //   position: 'top'
+        // }
       };
     })
   };
@@ -63,8 +63,8 @@ export function getLineChartSvg({
   const chart = echarts.init(null, null, {
     renderer: 'svg', // 必须使用 SVG 模式
     ssr: true, // 开启 SSR
-    width: 1000, // 需要指明高和宽
-    height: 400
+    width: 1920, // 需要指明高和宽
+    height: 1080
   });
   // 像正常使用一样 setOption
   chart.setOption(options);
