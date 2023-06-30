@@ -11,7 +11,8 @@ import {
   METRICS_REPORT_MAP,
   METRICS_SECOND_UNIT,
   METRICS_STANDARD_MAP,
-  PERFORMANCE_TOOLS_MAP
+  PERFORMANCE_TOOLS_MAP,
+  REPORT_TYPE_MAP
 } from '../const';
 
 import { getValueRange, isValidNumber } from './get-value';
@@ -431,6 +432,43 @@ const TOOL_REPORT_LINK_FUNC_MAP = {
   [PERFORMANCE_TOOLS_MAP.SITESPEED]: getSitespeedReportLinks
 };
 
+export const createHtmlReport = (content, options) => {
+  const { outputPath } = options;
+
+  let htmlContent = marked.parse(content);
+
+  htmlContent = getHtmlResult({ bodyStr: htmlContent, title: '性能测试报告' });
+
+  const reportPath = `${outputPath}/report.html`;
+
+  ensureFileSync(reportPath);
+
+  writeFileSync(reportPath, htmlContent);
+
+  return reportPath;
+};
+
+export const createMdReport = (content, options) => {
+  const { outputPath } = options;
+
+  const reportPath = `${outputPath}/report.md`;
+
+  ensureFileSync(reportPath);
+
+  writeFileSync(reportPath, content);
+
+  return reportPath;
+};
+
+export const createReportFile = (content, options) => {
+  const { reportType } = options;
+  if (reportType === REPORT_TYPE_MAP.MD) {
+    return createMdReport(content, options);
+  }
+
+  return createHtmlReport(content, options);
+};
+
 export const createPerformanceReport = (performanceResultList, options) => {
   const {
     outputPath,
@@ -517,15 +555,5 @@ export const createPerformanceReport = (performanceResultList, options) => {
 
   // console.log('md content--->', content);
 
-  let htmlContent = marked.parse(content);
-
-  htmlContent = getHtmlResult({ bodyStr: htmlContent, title: '性能测试报告' });
-
-  const reportPath = `${outputPath}/report.html`;
-
-  ensureFileSync(reportPath);
-
-  writeFileSync(reportPath, htmlContent);
-
-  return reportPath;
+  return createReportFile(content, options);
 };

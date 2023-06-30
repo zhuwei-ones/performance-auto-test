@@ -7,7 +7,7 @@ import {
   LIGHTHOUSE_DEFAULT_OPTIONS,
   METRICS_CONFIG,
   PERFORMANCE_TOOLS_LIST,
-  PERFORMANCE_TOOLS_MAP, SITESPEED_DEFAULT_CONFIG
+  PERFORMANCE_TOOLS_MAP, REPORT_TYPE_MAP, SITESPEED_DEFAULT_CONFIG
 } from '../const';
 import { getAbsolutePath, getKeypathFromUrl } from './get-value';
 
@@ -22,7 +22,8 @@ export function verifyOptions(options = {}) {
     sitespeedConfig: Joi.object(),
     setting: Joi.object(),
     lighthouse: Joi.boolean(),
-    sitespeed: Joi.boolean()
+    sitespeed: Joi.boolean(),
+    reportType: [REPORT_TYPE_MAP.MD, REPORT_TYPE_MAP.HTML]
   });
 
   const result = schema.validate(options);
@@ -115,7 +116,7 @@ export function getSitespeedOptions(optoins = {}) {
 
 export function getOutputPath(outputPath, testTime = new Date()) {
   const currentOutput = outputPath || DEFAULT_REPORT_DIR;
-  const currentTime = testTime?.toLocaleString?.().replace(/\/|:|\s/g, '_');
+  const currentTime = `${testTime.getFullYear()}_${testTime.getMonth() + 1}_${testTime.getDate()}_${testTime.getHours()}_${testTime.getMinutes()}_${testTime.getSeconds()}`;
 
   return getAbsolutePath(`${currentOutput}/${currentTime}`);
 }
@@ -133,6 +134,7 @@ export function getDefaultOptions(options) {
     iterations: iterations || 3,
     outputPath: getOutputPath(outputPath, testTime),
     preview: options.preview || false,
+    reportType: options.reportType || REPORT_TYPE_MAP.HTML,
     ...options,
     metricsConfig: {
       good: {

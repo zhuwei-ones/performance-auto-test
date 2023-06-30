@@ -13,7 +13,7 @@ afterAll(() => {
   removeSync(outputPathParent);
 });
 
-describe("Test MD DOC", () => {
+describe("Test Report doc", () => {
   test("Test util", async () => {
     expect(
       getReportConclusion({
@@ -159,7 +159,64 @@ describe("Test MD DOC", () => {
     });
   });
 
-  test("Test Main Doc", async () => {
+  test("Test MD DOC", async () => {
+
+    const reportPath = createPerformanceReport(
+      [
+        {
+          type: "lighthouse",
+          result: {
+            baidu_com__: {
+              metircs: {
+                CLS: 0,
+                FCP: 980,
+                FID: 0,
+                LCP: 1315,
+                TBT: 3,
+                TTFB: 722,
+                TTI: 0,
+              },
+              url: "http://baidu.com",
+            },
+          },
+        },
+      ],
+      {
+        outputPath: outputPathParent,
+        testTime: new Date(),
+        testTools: ["lighthouse"],
+        reportType: "md",
+        setting: {
+          userAgent: "xxxx",
+        },
+        iterations: 3,
+        lighthouseOptions: {
+          outputPath: "output/lighthouse",
+        },
+        metricsConfig: {
+          good: {
+            lcp: METRICS_CONFIG.GOOD.LCP,
+            cls: METRICS_CONFIG.GOOD.CLS,
+            fid: METRICS_CONFIG.GOOD.FID,
+          },
+          bad: {
+            lcp: METRICS_CONFIG.BAD.LCP,
+            cls: METRICS_CONFIG.BAD.CLS,
+            fid: METRICS_CONFIG.BAD.FID,
+          },
+        },
+      }
+    );
+
+    expect(reportPath).toEqual(`${outputPathParent}/report.md`);
+
+    expect(statSync(`${outputPathParent}/report.md`).size).toBeGreaterThan(
+      1000
+    );
+
+  })
+
+  test("Test Default Doc", async () => {
     const reportPath = createPerformanceReport(
       [
         {
@@ -212,4 +269,5 @@ describe("Test MD DOC", () => {
       1000
     );
   });
+
 });

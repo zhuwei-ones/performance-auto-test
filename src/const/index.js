@@ -1,5 +1,10 @@
 export const CWD = process.cwd();
 
+export const REPORT_TYPE_MAP = {
+  MD: 'md',
+  HTML: 'html'
+};
+
 export const LOG_FILE_NAME = '.performance-test.log';
 
 export const DEFAULT_CONFIG_PATH = './performance-test.config.json';
