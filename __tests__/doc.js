@@ -14,7 +14,7 @@ afterAll(() => {
 });
 
 describe("Test Report doc", () => {
-  test("Test util", async () => {
+  test("Test util getReportConclusion", async () => {
     expect(
       getReportConclusion({
         performanceResultList: {
@@ -45,6 +45,7 @@ describe("Test Report doc", () => {
             fid: METRICS_CONFIG.BAD.FID,
           },
         },
+        compareMetricsType:"avg"
       })
     ).toEqual([
       { h2: "测试结论" },
@@ -55,6 +56,59 @@ describe("Test Report doc", () => {
         },
       },
     ]);
+
+  });
+
+  test("Test util getReportConclusion p75", async () => {
+
+    expect(
+      getReportConclusion({
+        performanceResultList: {
+          lighthouse: {
+            baidu_com__: {
+              metircs: {
+                CLS: 100,
+                CLS_75: 0.1,
+                FCP: 980,
+                FID: 0,
+                FID_75: 100,
+                LCP: 1315,
+                LCP_75: 900,
+                TBT: 3,
+                TTFB: 722,
+                TTI: 0,
+              },
+              url: "http://baidu.com",
+            },
+          },
+        },
+        metricsConfig: {
+          good: {
+            lcp: METRICS_CONFIG.GOOD.LCP,
+            cls: METRICS_CONFIG.GOOD.CLS,
+            fid: METRICS_CONFIG.GOOD.FID,
+          },
+          bad: {
+            lcp: METRICS_CONFIG.BAD.LCP,
+            cls: METRICS_CONFIG.BAD.CLS,
+            fid: METRICS_CONFIG.BAD.FID,
+          },
+        },
+        compareMetricsType:"p75"
+      })
+    ).toEqual([
+      { h2: "测试结论" },
+      {
+        table: {
+          headers: ["Page", "lighthouse"],
+          rows: [["http://baidu.com", { greenText: "通过" }]],
+        },
+      },
+    ]);
+
+  });
+
+  test("Test util getToolCompareTableData", async () => {
 
     expect(
       getToolCompareTableData({
@@ -157,7 +211,8 @@ describe("Test Report doc", () => {
         ],
       },
     });
-  });
+
+  })
 
   test("Test MD DOC", async () => {
 
@@ -205,6 +260,7 @@ describe("Test Report doc", () => {
             fid: METRICS_CONFIG.BAD.FID,
           },
         },
+        compareMetricsType:"avg"
       }
     );
 
@@ -260,6 +316,7 @@ describe("Test Report doc", () => {
             fid: METRICS_CONFIG.BAD.FID,
           },
         },
+        compareMetricsType:"avg"
       }
     );
 

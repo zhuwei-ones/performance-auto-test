@@ -1,7 +1,7 @@
 import Joi from 'joi';
 import { isNil, omitBy } from 'lodash';
 import {
-  COMMON_TEST_CONFIG, DEFAULT_LIGHTHOUSE_REPORT_DIR,
+  COMMON_TEST_CONFIG, COMPARE_METRICS_TYPE_MAP, DEFAULT_LIGHTHOUSE_REPORT_DIR,
   DEFAULT_REPORT_DIR,
   DEFAULT_SITESPEED_REPORT_DIR, LIGHTHOUSE_DEFAULT_CONFIG,
   LIGHTHOUSE_DEFAULT_OPTIONS,
@@ -23,7 +23,8 @@ export function verifyOptions(options = {}) {
     setting: Joi.object(),
     lighthouse: Joi.boolean(),
     sitespeed: Joi.boolean(),
-    reportType: [REPORT_TYPE_MAP.MD, REPORT_TYPE_MAP.HTML]
+    reportType: [...Object.values(REPORT_TYPE_MAP)],
+    compareMetricsType: [...Object.values(COMPARE_METRICS_TYPE_MAP)]
   });
 
   const result = schema.validate(options);
@@ -135,18 +136,19 @@ export function getDefaultOptions(options) {
     outputPath: getOutputPath(outputPath, testTime),
     preview: options.preview || false,
     reportType: options.reportType || REPORT_TYPE_MAP.HTML,
+    compareMetricsType: options.compareMetricsType || COMPARE_METRICS_TYPE_MAP.AVG,
     ...options,
     metricsConfig: {
       good: {
         lcp: METRICS_CONFIG.GOOD.LCP,
         cls: METRICS_CONFIG.GOOD.CLS,
-        fid: METRICS_CONFIG.GOOD.FID,
+        // fid: METRICS_CONFIG.GOOD.FID,
         ...(metricsConfig?.good || {})
       },
       bad: {
         lcp: METRICS_CONFIG.BAD.LCP,
         cls: METRICS_CONFIG.BAD.CLS,
-        fid: METRICS_CONFIG.BAD.FID,
+        // fid: METRICS_CONFIG.BAD.FID,
         ...(metricsConfig?.bad || {})
       }
     },

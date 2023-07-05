@@ -26,6 +26,12 @@ export const COLOR_MAP = {
   ORANGE: '#fa3'
 };
 
+export const COMPARE_METRICS_TYPE_MAP = {
+  AVG: 'avg',
+  P75: 'p75',
+  P90: 'p90'
+};
+
 export const METRICS_RANGE_MAP = {
   good: COLOR_MAP.GREEN,
   bad: COLOR_MAP.RED,

@@ -11,9 +11,11 @@ import { parse } from 'url';
 import _ from 'lodash';
 
 import {
+  COMPARE_METRICS_TYPE_MAP,
   CWD,
   METRICS_LIGHTHOUSE_MAP,
   METRICS_SITESPEED_MAP,
+  METRICS_STANDARD_MAP,
   SITESPEED_JSON_RESULT_DIR
 } from '../const';
 import { logger } from './log';
@@ -304,4 +306,19 @@ export function getSitespeedWebVitals(sitespeedResultList) {
 
     return urlMetrics;
   }, {});
+}
+
+export function getCurrentMetricsStandard(metricsOptions) {
+  return METRICS_STANDARD_MAP.filter((key) => {
+    const value = metricsOptions[key.toLowerCase()];
+    return typeof value !== 'undefined';
+  });
+}
+
+export function getMetricsValueByCompareType(metircs, metricsKey, compareMetricsType) {
+  if (compareMetricsType === COMPARE_METRICS_TYPE_MAP.AVG) {
+    return metircs?.[metricsKey];
+  }
+
+  return metircs?.[`${metricsKey}_${compareMetricsType.slice(1)}`];
 }

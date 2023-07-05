@@ -43,11 +43,12 @@ describe("get options", () => {
       outputPath: "output",
     });
 
-    delete result.testTime;
-    expect(result).toEqual({
+    const expectResult = {
       iterations: 3,
       outputPath: "output",
       urls: ["https://www.baidu.com"],
+      reportType: "html",
+      compareMetricsType: "avg",
       preview: false,
       lighthouse: true,
       lighthouseOptions: {
@@ -110,12 +111,10 @@ describe("get options", () => {
       metricsConfig: {
         bad: {
           cls: 100,
-          fid: 100,
           lcp: 2500,
         },
         good: {
           cls: 100,
-          fid: 100,
           lcp: 1200,
         },
       },
@@ -159,32 +158,37 @@ describe("get options", () => {
         ],
       },
       testTools: ["lighthouse", "sitespeed"],
-    });
+    }
+
+    delete result.testTime;
+    expect(result).toEqual(expectResult);
+
 
     const result2 = getAllOptionsWithDefaultValue({
       urls: ["https://www.baidu.com"],
       iterations: 3,
       outputPath: "output",
-      lighthouseConfig:{
-        chromeFlags:["--headless","--no-sandbox"]
+      lighthouseConfig: {
+        chromeFlags: ["--headless", "--no-sandbox"],
       },
-      sitespeedConfig:{
-        "browsertime.headless":true,
-        "browsertime.chrome.args" :"no-sandbox"
+      sitespeedConfig: {
+        "browsertime.headless": true,
+        "browsertime.chrome.args": "no-sandbox",
       },
-      setting:{
-        latency:9999
-      }
+      setting: {
+        latency: 9999,
+      },
     });
 
     delete result2.testTime;
-
     expect(result2).toEqual({
       iterations: 3,
       outputPath: "output",
       urls: ["https://www.baidu.com"],
       preview: false,
       lighthouse: true,
+      reportType: "html",
+      compareMetricsType: "avg",
       lighthouseOptions: {
         iterations: 3,
         lighthouseConfig: {
@@ -212,7 +216,7 @@ describe("get options", () => {
               throughputKbps: 10240,
               uploadThroughputKbps: 10240,
             },
-          }
+          },
         },
         lighthouseOptions: {
           onlyCategories: ["performance"],
@@ -221,7 +225,7 @@ describe("get options", () => {
             Cookie:
               "OauthUserID=605711609;OauthAccessToken=dev.myones.net60571160932529168000;OauthExpires=32529168000",
           },
-          chromeFlags:["--headless","--no-sandbox"]
+          chromeFlags: ["--headless", "--no-sandbox"],
         },
         outputPath: "output/lighthouse-result",
         urls: [
@@ -245,19 +249,17 @@ describe("get options", () => {
       metricsConfig: {
         bad: {
           cls: 100,
-          fid: 100,
           lcp: 2500,
         },
         good: {
           cls: 100,
-          fid: 100,
           lcp: 1200,
         },
       },
-      lighthouseConfig: { chromeFlags: [ '--headless', '--no-sandbox' ] },
+      lighthouseConfig: { chromeFlags: ["--headless", "--no-sandbox"] },
       sitespeedConfig: {
-        'browsertime.headless': true,
-        'browsertime.chrome.args': 'no-sandbox'
+        "browsertime.headless": true,
+        "browsertime.chrome.args": "no-sandbox",
       },
       setting: {
         cpuSlowdown: 1,
@@ -279,8 +281,8 @@ describe("get options", () => {
           "browsertime.connectivity.latency": "'9999'",
           "browsertime.connectivity.profile": "custom",
           "browsertime.connectivity.upstreamKbps": 10240,
-          "browsertime.headless":true,
-          "browsertime.chrome.args" :"no-sandbox",
+          "browsertime.headless": true,
+          "browsertime.chrome.args": "no-sandbox",
           "browsertime.iterations": 3,
           "browsertime.userAgent":
             "'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36'",
@@ -302,9 +304,15 @@ describe("get options", () => {
       testTools: ["lighthouse", "sitespeed"],
     });
 
+    const result3 = getAllOptionsWithDefaultValue({
+      urls: ["https://www.baidu.com"],
+      iterations: 3,
+      outputPath: "output",
+      compareMetricsType:"p75"
+    });
+    delete result3.testTime;
+    expect(result3).toEqual({...expectResult,compareMetricsType:"p75"});
   });
-
-
 });
 
 describe("get value", () => {
@@ -521,44 +529,51 @@ describe("get value", () => {
           CLS: "0.000",
           CLS_75: "0.000",
           CLS_90: "0.000",
+          CLSList: [0],
           FCP: "153.072",
           FCP_75: "153.072",
           FCP_90: "153.072",
+          FCPList: [153.072],
           FID: "1127.574",
           FID_75: "1127.574",
           FID_90: "1127.574",
+          FIDList: [1127.574],
           LCP: "298.144",
           LCP_75: "298.144",
           LCP_90: "298.144",
+          LCPList: [298.144],
           SI: "2820.096",
           SI_75: "2820.096",
           SI_90: "2820.096",
+          SIList: [2820.096],
           TBT: "17.000",
           TBT_75: "17.000",
           TBT_90: "17.000",
           TTFB: "269.207",
           TTFB_75: "269.207",
           TTFB_90: "269.207",
+          TBTList: [17],
+          TTFBList: [269.207],
           TTI: "1127.574",
           TTI_75: "1127.574",
           TTI_90: "1127.574",
+          TTIList: [1127.574],
         },
         url: "http://baidu.com",
       },
     });
   });
 
+  test("getArrPercentile", () => {
+    expect(getArrPercentile([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 75)).toBe(8);
+    expect(getArrPercentile([10, 1, 2, 5, 6, 3, 4, 8, 9, 7], 90)).toBe(9);
+  });
 
-  test("getArrPercentile",()=>{
-    expect(getArrPercentile([1,2,3,4,5,6,7,8,9,10],75)).toBe(8)
-    expect(getArrPercentile([10,1,2,5,6,3,4,8,9,7],90)).toBe(9)
-  })
-
-  test("getValueRange",()=>{
-    expect(getValueRange(0.5,0.2,0.9)).toEqual("middle")
-    expect(getValueRange(0.1,0.2,0.9)).toEqual("good")
-    expect(getValueRange(1,0.2,0.9)).toEqual("bad")
-    expect(getValueRange(undefined,0.2,0.9)).toEqual("")
-    expect(getValueRange(1,undefined,0.9)).toEqual("")
-  })
+  test("getValueRange", () => {
+    expect(getValueRange(0.5, 0.2, 0.9)).toEqual("middle");
+    expect(getValueRange(0.1, 0.2, 0.9)).toEqual("good");
+    expect(getValueRange(1, 0.2, 0.9)).toEqual("bad");
+    expect(getValueRange(undefined, 0.2, 0.9)).toEqual("");
+    expect(getValueRange(1, undefined, 0.9)).toEqual("");
+  });
 });

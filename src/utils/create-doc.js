@@ -10,12 +10,16 @@ import {
   METRICS_RANGE_MAP,
   METRICS_REPORT_MAP,
   METRICS_SECOND_UNIT,
-  METRICS_STANDARD_MAP,
   PERFORMANCE_TOOLS_MAP,
   REPORT_TYPE_MAP
 } from '../const';
 
-import { getValueRange, isValidNumber } from './get-value';
+import {
+  getCurrentMetricsStandard,
+  getMetricsValueByCompareType,
+  getValueRange,
+  isValidNumber
+} from './get-value';
 import { logger } from './log';
 import { getLineChartSvg } from './common';
 
@@ -32,9 +36,13 @@ json2md.converters.orangeText = (input) => {
 };
 
 json2md.converters.textList = (list) => {
-  const result = list.map(item=>{
-    return `<font color="${METRICS_RANGE_MAP[item.type] || '#999'}">${item.input}</font><br>`;
-  }).join('');
+  const result = list
+    .map((item) => {
+      return `<font color="${METRICS_RANGE_MAP[item.type] || '#999'}">${
+        item.input
+      }</font><br>`;
+    })
+    .join('');
 
   return `<div>${result}</div>`;
 };
@@ -66,7 +74,8 @@ const getHtmlResult = ({ bodyStr, title }) => {
 
 export const getReportConclusion = ({
   performanceResultList,
-  metricsConfig
+  metricsConfig,
+  compareMetricsType
 }) => {
   // 总的是否通过
   // 链接表格 具体那个不通过
@@ -85,22 +94,29 @@ export const getReportConclusion = ({
     obj.push(urlData.url);
 
     allTools.forEach((tool) => {
-      const isUnApprove = METRICS_STANDARD_MAP.some((metricsKey) => {
-        const pageData = performanceResultList[tool][urlKey];
-        let pageMetrics = pageData?.metircs?.[metricsKey];
-        const metricsLowerKey = metricsKey.toLowerCase();
-        const goodMetricsVal = goodMetrics[metricsLowerKey];
+      const isUnApprove = getCurrentMetricsStandard(goodMetrics).some(
+        (metricsKey) => {
+          const pageData = performanceResultList[tool][urlKey];
+          let pageMetrics = getMetricsValueByCompareType(
+            pageData.metircs,
+            metricsKey,
+            compareMetricsType
+          );
 
-        // 需要一个地方，同一把所有指标都统一成一个单位
-        // 如果不是 s 单位的，就需要除1000
-        if (METRICS_SECOND_UNIT.includes(metricsKey)) {
-          pageMetrics *= 1000;
+          const metricsLowerKey = metricsKey.toLowerCase();
+          const goodMetricsVal = goodMetrics[metricsLowerKey];
+
+          // 需要一个地方，同一把所有指标都统一成一个单位
+          // 如果不是 s 单位的，就需要除1000
+          if (METRICS_SECOND_UNIT.includes(metricsKey)) {
+            pageMetrics *= 1000;
+          }
+
+          const isBest = goodMetricsVal && goodMetricsVal >= pageMetrics;
+
+          return !isBest;
         }
-
-        const isBest = goodMetricsVal && goodMetricsVal >= pageMetrics;
-
-        return !isBest;
-      });
+      );
 
       obj.push(isUnApprove ? { redText: '不通过' } : { greenText: '通过' });
     });
@@ -166,9 +182,21 @@ export const getToolCompareTableData = ({
 
           const goodMetricsMSVal = goodMetricsVal / 1000;
           const badMetricsMSVal = badMetricsVal / 1000;
-          const metricsAvgRange = getValueRange(pageMetricsAvg, goodMetricsMSVal, badMetricsMSVal);
-          const metrics75Range = getValueRange(pageMetrics75, goodMetricsMSVal, badMetricsMSVal);
-          const metrics90Range = getValueRange(pageMetrics90, goodMetricsMSVal, badMetricsMSVal);
+          const metricsAvgRange = getValueRange(
+            pageMetricsAvg,
+            goodMetricsMSVal,
+            badMetricsMSVal
+          );
+          const metrics75Range = getValueRange(
+            pageMetrics75,
+            goodMetricsMSVal,
+            badMetricsMSVal
+          );
+          const metrics90Range = getValueRange(
+            pageMetrics90,
+            goodMetricsMSVal,
+            badMetricsMSVal
+          );
 
           const pageMetricsAvgUnit = `AVG: ${pageMetricsAvg} s`;
           const pageMetrics75Unit = `P75: ${pageMetrics75} s`;
@@ -218,7 +246,7 @@ export const getToolCompareTableData = ({
   };
 };
 
-export const getToolCompareChartImg = (data)=>{
+export const getToolCompareChartImg = (data) => {
   const {
     result, outputPath, type, metricsType
   } = data;
@@ -249,7 +277,9 @@ export const getToolCompareChartImg = (data)=>{
     name: `${type}-${metricsType}`
   });
 
-  return { img: { title: 'My image title', source: path, alt: 'My image alt' } };
+  return {
+    img: { title: 'My image title', source: path, alt: 'My image alt' }
+  };
 };
 
 export const getMetricsStandardDataTable = (metricsConfig) => {
@@ -257,17 +287,17 @@ export const getMetricsStandardDataTable = (metricsConfig) => {
 
   return {
     table: {
-      headers: ['', ...METRICS_STANDARD_MAP],
+      headers: ['', ...getCurrentMetricsStandard(good)],
       rows: [
         [
           { greenText: '最优' },
-          ...METRICS_STANDARD_MAP.map((key) => {
+          ...getCurrentMetricsStandard(good).map((key) => {
             return `${good[key.toLowerCase()]} ms`;
           })
         ],
         [
           { redText: '最差' },
-          ...METRICS_STANDARD_MAP.map((key) => {
+          ...getCurrentMetricsStandard(bad).map((key) => {
             return `${bad[key.toLowerCase()]} ms`;
           })
         ]
@@ -476,7 +506,8 @@ export const createPerformanceReport = (performanceResultList, options) => {
     setting,
     testTime,
     testTools,
-    iterations
+    iterations,
+    compareMetricsType
   } = options;
 
   const json = [];
@@ -495,7 +526,8 @@ export const createPerformanceReport = (performanceResultList, options) => {
   json.push(
     getReportConclusion({
       performanceResultList: performanceResultMap,
-      metricsConfig
+      metricsConfig,
+      compareMetricsType
     })
   );
 
@@ -533,9 +565,21 @@ export const createPerformanceReport = (performanceResultList, options) => {
       })
     );
 
-    const lcpSvg = getToolCompareChartImg({ ...item, outputPath, metricsType: METRICS_MAP.LCP });
-    const clsSvg = getToolCompareChartImg({ ...item, outputPath, metricsType: METRICS_MAP.CLS });
-    const fidSvg = getToolCompareChartImg({ ...item, outputPath, metricsType: METRICS_MAP.FID });
+    const lcpSvg = getToolCompareChartImg({
+      ...item,
+      outputPath,
+      metricsType: METRICS_MAP.LCP
+    });
+    const clsSvg = getToolCompareChartImg({
+      ...item,
+      outputPath,
+      metricsType: METRICS_MAP.CLS
+    });
+    const fidSvg = getToolCompareChartImg({
+      ...item,
+      outputPath,
+      metricsType: METRICS_MAP.FID
+    });
 
     if (lcpSvg || clsSvg || fidSvg) {
       json.push({ h4: `${type} 折线图` });
