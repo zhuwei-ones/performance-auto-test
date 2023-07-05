@@ -25,7 +25,7 @@ export async function runTask(func, { options, lifecycles } = {}) {
 
   try {
     onBegin?.({ tool, url });
-    logger.info(`${tool} 开始第${index} 次测试 ${url}} `);
+    logger.info(`${tool} 开始第${index} 次测试 ${url} `);
     const result = await func();
     onDone?.({ tool, url });
     logger.success(`${tool} 测试 ${url}} ，第${index} 次完成`);
