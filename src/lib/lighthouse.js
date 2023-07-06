@@ -40,8 +40,11 @@ export async function runLighthouse(url, options) {
     urlKey: urlKey,
     index: urlIndex,
     outputPath,
-    resultList: runnerResult
+    resultList: runnerResult,
+    lighthouseConfig
   });
+
+  runnerResult = null;
 
   return audits;
 }

@@ -3,7 +3,7 @@ import PerformanceTest from "../src";
 
 import useServer from '../example/server'
 import { removeSync, statSync } from "fs-extra";
-import {  getAbsolutePath, getOutputPath } from "../src/utils";
+import {  getAbsolutePath } from "../src/utils";
 import { DEFAULT_LIGHTHOUSE_REPORT_DIR, DEFAULT_SITESPEED_REPORT_DIR } from "../src/const";
 import { glob } from "glob";
 
@@ -24,6 +24,10 @@ afterAll(() => {
   removeSync(_oupAbsolute);
 });
 
+beforeEach(() => {
+  removeSync(_oupAbsolute);
+})
+
 
 // https://github.com/justinribeiro/lighthouse-jest-example
 
@@ -36,7 +40,7 @@ test("Test Main Entry", async () => {
     outputPath:_oupAbsolute ,
   });
 
-  const lighthouseReportDir = getAbsolutePath(`${_oup}/**/${DEFAULT_LIGHTHOUSE_REPORT_DIR}/**/1.json`);
+  const lighthouseReportDir = getAbsolutePath(`${_oup}/**/${DEFAULT_LIGHTHOUSE_REPORT_DIR}/**/1.html`);
   const sitespeedReportDir = getAbsolutePath(`${_oup}/**/${DEFAULT_SITESPEED_REPORT_DIR}/**/data/browsertime.summary-localhost.json`);
 
   const lChildDir = glob.sync(lighthouseReportDir)?.[0]
@@ -58,7 +62,7 @@ test("Test Main Entry Only Performance", async () => {
     sitespeed:false
   });
 
-  const lighthouseReportDir = getAbsolutePath(`${_oup}/**/${DEFAULT_LIGHTHOUSE_REPORT_DIR}/**/1.json`);
+  const lighthouseReportDir = getAbsolutePath(`${_oup}/**/${DEFAULT_LIGHTHOUSE_REPORT_DIR}/**/1.html`);
   const sitespeedReportDir = getAbsolutePath(`${_oup}/**/${DEFAULT_SITESPEED_REPORT_DIR}/**/data/browsertime.summary-localhost.json`);
 
   const lChildDir = glob.sync(lighthouseReportDir)?.[0]
@@ -80,7 +84,7 @@ test("Test Main Entry Only Sitespeed", async () => {
     lighthouse:false
   });
 
-  const lighthouseReportDir = getAbsolutePath(`${_oup}/**/${DEFAULT_LIGHTHOUSE_REPORT_DIR}/**/1.json`);
+  const lighthouseReportDir = getAbsolutePath(`${_oup}/**/${DEFAULT_LIGHTHOUSE_REPORT_DIR}/**/1.html`);
   const sitespeedReportDir = getAbsolutePath(`${_oup}/**/${DEFAULT_SITESPEED_REPORT_DIR}/**/data/browsertime.summary-localhost.json`);
 
   const lChildDir = glob.sync(lighthouseReportDir)?.[0]

@@ -79,7 +79,7 @@ export function getRelativePath(path) {
 // dir/time/tool-name/
 export function getLighthouseReportPath(parentPath, name, index) {
   const htmlFile = `${parentPath}/${name}/${index}.html`;
-  const jsonFile = `${parentPath}/${name}/${index}.json`;
+  const jsonFile = `${parentPath}/${name}/${index}.trace.json`;
   ensureFileSync(jsonFile);
   ensureFileSync(htmlFile);
   return {

@@ -79,6 +79,7 @@ describe("get options", () => {
               uploadThroughputKbps: 10240,
             },
           },
+          saveAssets: false,
         },
         lighthouseOptions: {
           onlyCategories: ["performance"],
@@ -158,11 +159,10 @@ describe("get options", () => {
         ],
       },
       testTools: ["lighthouse", "sitespeed"],
-    }
+    };
 
     delete result.testTime;
     expect(result).toEqual(expectResult);
-
 
     const result2 = getAllOptionsWithDefaultValue({
       urls: ["https://www.baidu.com"],
@@ -217,6 +217,7 @@ describe("get options", () => {
               uploadThroughputKbps: 10240,
             },
           },
+          saveAssets: false,
         },
         lighthouseOptions: {
           onlyCategories: ["performance"],
@@ -308,10 +309,10 @@ describe("get options", () => {
       urls: ["https://www.baidu.com"],
       iterations: 3,
       outputPath: "output",
-      compareMetricsType:"p75"
+      compareMetricsType: "p75",
     });
     delete result3.testTime;
-    expect(result3).toEqual({...expectResult,compareMetricsType:"p75"});
+    expect(result3).toEqual({ ...expectResult, compareMetricsType: "p75" });
   });
 });
 

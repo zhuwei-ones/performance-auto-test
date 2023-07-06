@@ -53,18 +53,41 @@ test("Test Sitespeed Entry", async () => {
   ).not.toBeUndefined();
 });
 
-test("Test Ligthhouse Entry", async () => {
-  const outputPath2 = `${outputPath}/${DEFAULT_LIGHTHOUSE_REPORT_DIR}`;
-  const result = await runLighthouse(url, {
-    outputPath: outputPath2,
-    urlKey: key,
-    urlIndex: 1,
-    lighthouseConfig: LIGHTHOUSE_DEFAULT_CONFIG,
-    lighthouseOptions: LIGHTHOUSE_DEFAULT_OPTIONS
+describe("Test Ligthhouse Entry",()=>{
+
+  test("lighthouse default", async () => {
+    const outputPath2 = `${outputPath}/${DEFAULT_LIGHTHOUSE_REPORT_DIR}`;
+    const result = await runLighthouse(url, {
+      outputPath: outputPath2,
+      urlKey: key,
+      urlIndex: 1,
+      lighthouseConfig: LIGHTHOUSE_DEFAULT_CONFIG,
+      lighthouseOptions: LIGHTHOUSE_DEFAULT_OPTIONS
+    });
+    expect(statSync(`${outputPath2}/${key}/1.trace.json`).size).toBe(0);
+    expect(statSync(`${outputPath2}/${key}/1.html`).size).toBeGreaterThan(1000);
+    expect(result["first-contentful-paint"]?.numericValue).not.toBeUndefined();
+    expect(result["largest-contentful-paint"]?.numericValue).not.toBeUndefined();
+    expect(result["cumulative-layout-shift"]?.numericValue).not.toBeUndefined();
   });
-  expect(statSync(`${outputPath2}/${key}/1.json`).size).toBeGreaterThan(1000);
-  expect(statSync(`${outputPath2}/${key}/1.html`).size).toBeGreaterThan(1000);
-  expect(result["first-contentful-paint"]?.numericValue).not.toBeUndefined();
-  expect(result["largest-contentful-paint"]?.numericValue).not.toBeUndefined();
-  expect(result["cumulative-layout-shift"]?.numericValue).not.toBeUndefined();
-});
+
+  test("lighthouse output trace json", async () => {
+    const outputPath2 = `${outputPath}/${DEFAULT_LIGHTHOUSE_REPORT_DIR}`;
+    const result = await runLighthouse(url, {
+      outputPath: outputPath2,
+      urlKey: key,
+      urlIndex: 1,
+      lighthouseConfig: {
+        ...LIGHTHOUSE_DEFAULT_CONFIG,
+        saveAssets: true
+      },
+      lighthouseOptions: LIGHTHOUSE_DEFAULT_OPTIONS
+    });
+    expect(statSync(`${outputPath2}/${key}/1.trace.json`).size).toBeGreaterThan(1000);
+    expect(statSync(`${outputPath2}/${key}/1.html`).size).toBeGreaterThan(1000);
+    expect(result["first-contentful-paint"]?.numericValue).not.toBeUndefined();
+    expect(result["largest-contentful-paint"]?.numericValue).not.toBeUndefined();
+    expect(result["cumulative-layout-shift"]?.numericValue).not.toBeUndefined();
+  });
+  
+})

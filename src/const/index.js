@@ -172,7 +172,8 @@ export const LIGHTHOUSE_DEFAULT_CONFIG = {
     emulatedUserAgent: COMMON_TEST_CONFIG.USER_AGENT,
     // Skip the h2 audit so it doesn't lie to us. See https://github.com/GoogleChrome/lighthouse/issues/6539
     skipAudits: ['uses-http2']
-  }
+  },
+  saveAssets: false
 };
 
 export const SITESPEED_DEFAULT_CONFIG = {
