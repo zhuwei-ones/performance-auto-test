@@ -51,8 +51,6 @@ export const USER_AGENTS = {
 };
 
 export const HEADERS = {
-  Cookie:
-    'OauthUserID=605711609;OauthAccessToken=dev.myones.net60571160932529168000;OauthExpires=32529168000'
 };
 
 export const METRICS_MAP = {
@@ -141,7 +139,7 @@ export const COMMON_TEST_CONFIG = {
 export const LIGHTHOUSE_DEFAULT_OPTIONS = {
   onlyCategories: ['performance'],
   output: 'html',
-  extraHeaders: HEADERS,
+  // extraHeaders: HEADERS,
   chromeFlags: ['--headless']
 };
 
@@ -173,19 +171,20 @@ export const LIGHTHOUSE_DEFAULT_CONFIG = {
     // Skip the h2 audit so it doesn't lie to us. See https://github.com/GoogleChrome/lighthouse/issues/6539
     skipAudits: ['uses-http2']
   },
-  saveAssets: false
+  saveAssets: false,
+  saveAllJson: false
 };
 
 export const SITESPEED_DEFAULT_CONFIG = {
   'plugins.add': 'analysisstorer',
   'browsertime.headless': true,
   browser: 'chrome',
-  silent: true,
-  requestheader: (() => {
-    return Object.keys(HEADERS)
-      .map((headerName) => {
-        return `${headerName.toLowerCase()}:'${HEADERS[headerName]}'`;
-      })
-      .join(' ');
-  })()
+  silent: true
+  // requestheader: (() => {
+  //   return Object.keys(HEADERS)
+  //     .map((headerName) => {
+  //       return `${headerName.toLowerCase()}:'${HEADERS[headerName]}'`;
+  //     })
+  //     .join(' ');
+  // })()
 };

@@ -34,6 +34,10 @@ afterAll(() => {
   removeSync(outputPathParent);
 });
 
+beforeEach(()=>{
+  removeSync(outputPathParent);
+})
+
 test("Test Sitespeed Entry", async () => {
   const outputPath2 = `${outputPath}/${DEFAULT_SITESPEED_REPORT_DIR}`;
   const result = await runSitespeed(url, {
@@ -65,6 +69,7 @@ describe("Test Ligthhouse Entry",()=>{
       lighthouseOptions: LIGHTHOUSE_DEFAULT_OPTIONS
     });
     expect(statSync(`${outputPath2}/${key}/1.trace.json`).size).toBe(0);
+    expect(statSync(`${outputPath2}/${key}/1.all.json`).size).toBe(0);
     expect(statSync(`${outputPath2}/${key}/1.html`).size).toBeGreaterThan(1000);
     expect(result["first-contentful-paint"]?.numericValue).not.toBeUndefined();
     expect(result["largest-contentful-paint"]?.numericValue).not.toBeUndefined();
@@ -84,10 +89,24 @@ describe("Test Ligthhouse Entry",()=>{
       lighthouseOptions: LIGHTHOUSE_DEFAULT_OPTIONS
     });
     expect(statSync(`${outputPath2}/${key}/1.trace.json`).size).toBeGreaterThan(1000);
-    expect(statSync(`${outputPath2}/${key}/1.html`).size).toBeGreaterThan(1000);
-    expect(result["first-contentful-paint"]?.numericValue).not.toBeUndefined();
-    expect(result["largest-contentful-paint"]?.numericValue).not.toBeUndefined();
-    expect(result["cumulative-layout-shift"]?.numericValue).not.toBeUndefined();
+  });
+
+
+  test("lighthouse output all json", async () => {
+    const outputPath2 = `${outputPath}/${DEFAULT_LIGHTHOUSE_REPORT_DIR}`;
+    const result = await runLighthouse(url, {
+      outputPath: outputPath2,
+      urlKey: key,
+      urlIndex: 1,
+      lighthouseConfig: {
+        ...LIGHTHOUSE_DEFAULT_CONFIG,
+        saveAllJson: true,
+        saveAssets: true
+      },
+      lighthouseOptions: LIGHTHOUSE_DEFAULT_OPTIONS
+    });
+    expect(statSync(`${outputPath2}/${key}/1.all.json`).size).toBeGreaterThan(1000);
+    expect(statSync(`${outputPath2}/${key}/1.trace.json`).size).toBe(0);
   });
   
 })

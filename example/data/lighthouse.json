@@ -6879,9 +6879,6 @@
     "locale": "en-US",
     "blockedUrlPatterns": null,
     "additionalTraceCategories": null,
-    "extraHeaders": {
-      "Cookie": "OauthUserID=605711609;OauthAccessToken=dev.myones.net60571160932529168000;OauthExpires=32529168000"
-    },
     "precomputedLanternData": null,
     "onlyAudits": null,
     "onlyCategories": ["performance"],

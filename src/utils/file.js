@@ -8,16 +8,22 @@ export async function createLighthouseReport(options) {
     urlKey, index, outputPath, resultList, lighthouseConfig
   } = options;
 
-  const { report: reportHtml } = resultList;
-  const { htmlFilePath, jsonFilePath } = getLighthouseReportPath(outputPath, urlKey, index);
+  const { saveAllJson, saveAssets } = lighthouseConfig;
 
-  const writeTasks = [
-    writeFile(htmlFilePath, reportHtml)
-  ];
+  const { report: reportHtml, ...rest } = resultList;
+  const { htmlFilePath, allJsonFilePath, assetJsonFile } = getLighthouseReportPath(outputPath, urlKey, index);
 
-  // 是否保存 trace json
-  if (lighthouseConfig.saveAssets) {
-    writeTasks.push(writeJson(jsonFilePath, resultList.artifacts, { spaces: 4 }));
+  const writeTasks = [writeFile(htmlFilePath, reportHtml)];
+
+  if (saveAllJson) {
+    writeTasks.push(
+      writeJson(allJsonFilePath, rest, { spaces: 4 })
+    );
+  } else if (saveAssets) {
+    // 是否保存 trace json
+    writeTasks.push(
+      writeJson(assetJsonFile, resultList.artifacts, { spaces: 4 })
+    );
   }
 
   return Promise.all(writeTasks);
