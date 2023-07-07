@@ -160,6 +160,8 @@ describe("get options", () => {
       urls: ["https://www.baidu.com"],
       iterations: 3,
       outputPath: "output",
+      lighthouse:true,
+      sitespeed:true,
     });
 
     delete result.testTime;

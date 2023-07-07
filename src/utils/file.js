@@ -11,11 +11,17 @@ export async function createLighthouseReport(options) {
   const { saveAllJson, saveAssets } = lighthouseConfig;
 
   const { report: reportHtml, ...rest } = resultList;
-  const { htmlFilePath, allJsonFilePath, assetJsonFile } = getLighthouseReportPath({
-    outputPath, urlKey, index, saveAllJson, saveAssets
+  const { htmlFilePath, allJsonFilePath, assetJsonFilePath } = getLighthouseReportPath({
+    outputPath,
+    name: urlKey,
+    index,
+    saveAllJson,
+    saveAssets
   });
 
   const writeTasks = [writeFile(htmlFilePath, reportHtml)];
+
+  console.log('saveAllJson', saveAllJson, allJsonFilePath);
 
   if (saveAllJson) {
     writeTasks.push(
@@ -24,7 +30,7 @@ export async function createLighthouseReport(options) {
   } else if (saveAssets) {
     // 是否保存 trace json
     writeTasks.push(
-      writeJson(assetJsonFile, resultList.artifacts, { spaces: 4 })
+      writeJson(assetJsonFilePath, resultList.artifacts, { spaces: 4 })
     );
   }
 

@@ -14,7 +14,7 @@ import {
 } from "../src/const";
 import useServer from '../example/server'
 
-import { removeSync, statSync } from "fs-extra";
+import { existsSync, removeSync, statSync } from "fs-extra";
 
 const url = "http://localhost:8091";
 const key = getKeypathFromUrl(url);
@@ -68,8 +68,8 @@ describe("Test Ligthhouse Entry",()=>{
       lighthouseConfig: LIGHTHOUSE_DEFAULT_CONFIG,
       lighthouseOptions: LIGHTHOUSE_DEFAULT_OPTIONS
     });
-    expect(statSync(`${outputPath2}/${key}/1.trace.json`).size).toBe(0);
-    expect(statSync(`${outputPath2}/${key}/1.all.json`).size).toBe(0);
+    expect(existsSync(`${outputPath2}/${key}/1.trace.json`)).toBe(false);
+    expect(existsSync(`${outputPath2}/${key}/1.all.json`)).toBe(false);
     expect(statSync(`${outputPath2}/${key}/1.html`).size).toBeGreaterThan(1000);
     expect(result["first-contentful-paint"]?.numericValue).not.toBeUndefined();
     expect(result["largest-contentful-paint"]?.numericValue).not.toBeUndefined();
@@ -89,6 +89,7 @@ describe("Test Ligthhouse Entry",()=>{
       lighthouseOptions: LIGHTHOUSE_DEFAULT_OPTIONS
     });
     expect(statSync(`${outputPath2}/${key}/1.trace.json`).size).toBeGreaterThan(1000);
+    expect(existsSync(`${outputPath2}/${key}/1.all.json`)).toBe(false);
   });
 
 
@@ -106,7 +107,7 @@ describe("Test Ligthhouse Entry",()=>{
       lighthouseOptions: LIGHTHOUSE_DEFAULT_OPTIONS
     });
     expect(statSync(`${outputPath2}/${key}/1.all.json`).size).toBeGreaterThan(1000);
-    expect(statSync(`${outputPath2}/${key}/1.trace.json`).size).toBe(0);
+    expect(existsSync(`${outputPath2}/${key}/1.trace.json`)).toBe(false);
   });
   
 })
