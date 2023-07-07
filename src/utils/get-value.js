@@ -77,18 +77,27 @@ export function getRelativePath(path) {
 }
 
 // dir/time/tool-name/
-export function getLighthouseReportPath(parentPath, name, index) {
-  const htmlFile = `${parentPath}/${name}/${index}.html`;
-  const allJsonFile = `${parentPath}/${name}/${index}.all.json`;
-  const assetJsonFile = `${parentPath}/${name}/${index}.trace.json`;
-  ensureFileSync(allJsonFile);
-  ensureFileSync(assetJsonFile);
-  ensureFileSync(htmlFile);
-  return {
-    htmlFilePath: htmlFile,
-    allJsonFilePath: allJsonFile,
-    assetJsonFile: assetJsonFile
+export function getLighthouseReportPath({
+  parentPath, name, index, saveAllJson, saveAssetJson
+}) {
+  const prefixPath = `${parentPath}/${name}/${index}`;
+  const result = {
+    htmlFilePath: `${prefixPath}.html`
   };
+
+  ensureFileSync(result.htmlFile);
+
+  if (saveAllJson) {
+    result.allJsonFilePath = `${prefixPath}.all.json`;
+    ensureFileSync(result.allJsonFilePath);
+  }
+
+  if (saveAssetJson) {
+    result.assetJsonFile = `${prefixPath}.trace.json`;
+    ensureFileSync(result.assetJsonFile);
+  }
+
+  return result;
 }
 
 export function getSitespeedReportPath(parentPath, name) {

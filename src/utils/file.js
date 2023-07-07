@@ -11,7 +11,9 @@ export async function createLighthouseReport(options) {
   const { saveAllJson, saveAssets } = lighthouseConfig;
 
   const { report: reportHtml, ...rest } = resultList;
-  const { htmlFilePath, allJsonFilePath, assetJsonFile } = getLighthouseReportPath(outputPath, urlKey, index);
+  const { htmlFilePath, allJsonFilePath, assetJsonFile } = getLighthouseReportPath({
+    outputPath, urlKey, index, saveAllJson, saveAssets
+  });
 
   const writeTasks = [writeFile(htmlFilePath, reportHtml)];
 
