@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import Joi from 'joi';
 import { isNil, omitBy } from 'lodash';
 import {
@@ -117,7 +118,7 @@ export function getSitespeedOptions(optoins = {}) {
 
 export function getOutputPath(outputPath, testTime = new Date()) {
   const currentOutput = outputPath || DEFAULT_REPORT_DIR;
-  const currentTime = `${testTime.getFullYear()}_${testTime.getMonth() + 1}_${testTime.getDate()}_${testTime.getHours()}_${testTime.getMinutes()}_${testTime.getSeconds()}`;
+  const currentTime = `${ dayjs(testTime).format('YYYY-MM-DD_HH_mm_ss')}`;
 
   return getAbsolutePath(`${currentOutput}/${currentTime}`);
 }
@@ -130,6 +131,16 @@ export function getDefaultOptions(options) {
   } = options;
 
   const testTime = new Date();
+
+  const testTools = [];
+
+  if (options[PERFORMANCE_TOOLS_MAP.LIGHTHOUSE]) {
+    testTools.push(PERFORMANCE_TOOLS_MAP.LIGHTHOUSE);
+  }
+
+  if (options[PERFORMANCE_TOOLS_MAP.SITESPEED]) {
+    testTools.push(PERFORMANCE_TOOLS_MAP.SITESPEED);
+  }
 
   return {
     iterations: iterations || 3,
@@ -163,10 +174,7 @@ export function getDefaultOptions(options) {
       ...options.setting
     },
     testTime: testTime,
-    testTools: [
-      PERFORMANCE_TOOLS_MAP.LIGHTHOUSE,
-      PERFORMANCE_TOOLS_MAP.SITESPEED
-    ],
+    testTools: testTools,
 
     // 默认开启所有的测试工具
     [PERFORMANCE_TOOLS_MAP.LIGHTHOUSE]: options[PERFORMANCE_TOOLS_MAP.LIGHTHOUSE] ?? true,

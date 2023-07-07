@@ -22,6 +22,7 @@ import {
 } from './get-value';
 import { logger } from './log';
 import { getLineChartSvg } from './common';
+import dayjs from 'dayjs';
 
 json2md.converters.redText = (input) => {
   return `<font color="${COLOR_MAP.RED}">${input}</font>`;
@@ -418,7 +419,7 @@ export const getTestEnvTableData = (options) => {
   const TestEnvHeader = [
     {
       title: '测试时间',
-      value: testTime.toLocaleString()
+      value: dayjs(testTime).format('YYYY-MM-DD HH:mm:ss')
     },
     {
       title: '测试工具',
