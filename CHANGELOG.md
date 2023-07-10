@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0-alpha.16](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.1.0-alpha.15...v1.1.0-alpha.16) (2023-07-10)
+
+
+### Bug Fixes
+
+* 网速设置显示错误 ([ddce453](https://github.com/zhuwei-ones/performance-auto-test/commit/ddce453d3fc2802a736267934235af1b98d0a655))
+
 ## [1.1.0-alpha.15](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.1.0-alpha.14...v1.1.0-alpha.15) (2023-07-07)
 
 
