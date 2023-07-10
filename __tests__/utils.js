@@ -221,6 +221,22 @@ describe("get options", () => {
     expect(result3.compareMetricsType).toEqual("p75");
   });
 
+  test("Test getAllOptionsWithDefaultValue KMS", () => {
+    const result4 = getAllOptionsWithDefaultValue({
+      urls: ["https://www.baidu.com"],
+      iterations: 3,
+      outputPath: "output",
+      setting:{
+        downloadKbps:4 * 1024,
+        uploadKbps: 4* 1024,
+      }
+    });
+
+    expect(result4.lighthouseOptions.lighthouseConfig.settings.throttling.downloadThroughputKbps).toEqual(4*1024);
+    expect(result4.lighthouseOptions.lighthouseConfig.settings.throttling.uploadThroughputKbps).toEqual(4*1024);
+  });
+
+
   test("Test getAllOptionsWithDefaultValue saveAssets", () => {
     const result4 = getAllOptionsWithDefaultValue({
       urls: ["https://www.baidu.com"],
