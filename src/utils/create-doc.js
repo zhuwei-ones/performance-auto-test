@@ -18,7 +18,8 @@ import {
   getCurrentMetricsStandard,
   getMetricsValueByCompareType,
   getValueRange,
-  isValidNumber
+  isValidNumber,
+  kbToMb
 } from './get-value';
 import { logger } from './log';
 import { getLineChartSvg } from './common';
@@ -427,7 +428,7 @@ export const getTestEnvTableData = (options) => {
     },
     {
       title: '网络状态',
-      value: `上传速度：${KBPS_NAME[downloadKbps]}，下载速度${KBPS_NAME[uploadKbps]}，延迟：${latency}ms`
+      value: `上传速度：${kbToMb(downloadKbps)}，下载速度：${kbToMb(uploadKbps)}，延迟：${latency}ms`
     },
     {
       title: '浏览器信息',

@@ -334,3 +334,8 @@ export function getMetricsValueByCompareType(metircs, metricsKey, compareMetrics
 
   return metircs?.[`${metricsKey}_${compareMetricsType.slice(1)}`];
 }
+
+export function kbToMb(kb) {
+  const mb = kb / 1024;
+  return `${mb}M`;
+}
