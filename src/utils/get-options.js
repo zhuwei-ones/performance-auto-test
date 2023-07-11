@@ -65,12 +65,12 @@ export function getLighthouseOptions(optoins = {}) {
         ...configRest.settings,
         throttling: { // constants.throttling.desktopDense4G,
           ...LIGHTHOUSE_DEFAULT_CONFIG.settings.throttling,
-          ...(configRest?.settings?.throttling || {}),
           rttMs: setting.latency, // Round-Trip Time，往返时延，从发送端发送数据开始，到发送端收到来自接收端的确认
           requestLatencyMs: setting.latency, // 0 means unset
           downloadThroughputKbps: setting.downloadKbps,
           uploadThroughputKbps: setting.uploadKbps,
-          cpuSlowdownMultiplier: setting.cpuSlowdown
+          cpuSlowdownMultiplier: setting.cpuSlowdown,
+          ...(configRest?.settings?.throttling || {})
         },
         screenEmulation: {
           ...LIGHTHOUSE_DEFAULT_CONFIG.settings.screenEmulation,
