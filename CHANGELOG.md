@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0-alpha.18](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.1.0-alpha.17...v1.1.0-alpha.18) (2023-07-11)
+
+
+### Bug Fixes
+
+* lighthouse 自己配置应该比全局的配置高 ([5dd3c0e](https://github.com/zhuwei-ones/performance-auto-test/commit/5dd3c0e1c96d22050a30dc77ebab9eebe43fd3a7))
+
 ## [1.1.0-alpha.17](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.1.0-alpha.16...v1.1.0-alpha.17) (2023-07-11)
 
 ## [1.1.0-alpha.16](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.1.0-alpha.15...v1.1.0-alpha.16) (2023-07-10)
