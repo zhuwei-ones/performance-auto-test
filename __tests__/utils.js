@@ -236,7 +236,6 @@ describe("get options", () => {
     expect(result4.lighthouseOptions.lighthouseConfig.settings.throttling.uploadThroughputKbps).toEqual(4*1024);
   });
 
-
   test("Test getAllOptionsWithDefaultValue saveAssets", () => {
     const result4 = getAllOptionsWithDefaultValue({
       urls: ["https://www.baidu.com"],
@@ -248,6 +247,34 @@ describe("get options", () => {
     });
 
     expect(result4.lighthouseOptions.lighthouseConfig.saveAssets).toEqual(true);
+  });
+
+  test("Test getAllOptionsWithDefaultValue lighthouse config", () => {
+    const result4 = getAllOptionsWithDefaultValue({
+      urls: ["https://www.baidu.com"],
+      iterations: 3,
+      outputPath: "output",
+      lighthouseConfig: {
+        saveAssets: true,
+        settings:{
+          throttling:{
+            rttMs: 300,
+            throughputKbps: 700,
+            requestLatencyMs: 300 * 3.75,
+            downloadThroughputKbps: 700 * 0.9,
+            uploadThroughputKbps: 700 * 0.9,
+            cpuSlowdownMultiplier: 4,
+          }
+        }
+      },
+    });
+
+    expect(result4.lighthouseOptions.lighthouseConfig.settings.throttling.rttMs).toEqual(300);
+    expect(result4.lighthouseOptions.lighthouseConfig.settings.throttling.throughputKbps).toEqual(700);
+    expect(result4.lighthouseOptions.lighthouseConfig.settings.throttling.requestLatencyMs).toEqual(300 * 3.75);
+    expect(result4.lighthouseOptions.lighthouseConfig.settings.throttling.downloadThroughputKbps).toEqual(700 * 0.9);
+    expect(result4.lighthouseOptions.lighthouseConfig.settings.throttling.uploadThroughputKbps).toEqual(700 * 0.9);
+    expect(result4.lighthouseOptions.lighthouseConfig.settings.throttling.cpuSlowdownMultiplier).toEqual(4);
   });
 
 });
