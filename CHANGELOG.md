@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0-alpha.19](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.1.0-alpha.18...v1.1.0-alpha.19) (2023-07-11)
+
+
+### Bug Fixes
+
+* 报告显示kb 或者 mb ([f814832](https://github.com/zhuwei-ones/performance-auto-test/commit/f81483280cc98c100d65b6b27861183c6821178a))
+
 ## [1.1.0-alpha.18](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.1.0-alpha.17...v1.1.0-alpha.18) (2023-07-11)
 
 
