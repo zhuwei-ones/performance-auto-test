@@ -21,8 +21,6 @@ export async function createLighthouseReport(options) {
 
   const writeTasks = [writeFile(htmlFilePath, reportHtml)];
 
-  console.log('saveAllJson', saveAllJson, allJsonFilePath);
-
   if (saveAllJson) {
     writeTasks.push(
       writeJson(allJsonFilePath, rest, { spaces: 4 })
