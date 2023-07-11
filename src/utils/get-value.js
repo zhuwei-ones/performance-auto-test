@@ -336,6 +336,10 @@ export function getMetricsValueByCompareType(metircs, metricsKey, compareMetrics
 }
 
 export function kbToMb(kb) {
-  const mb = kb / 1024;
-  return `${mb}M`;
+  const mb = kb / 1024; // 将 KB 转换为 MB
+
+  if (mb <= 1) {
+    return kb + ' KB';
+  }
+  return mb + ' MB';
 }
