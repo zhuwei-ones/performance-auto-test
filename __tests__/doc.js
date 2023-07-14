@@ -13,7 +13,9 @@ afterAll(() => {
   removeSync(outputPathParent);
 });
 
-describe("Test Report doc", () => {
+
+describe("Test Report util", () => {
+
   test("Test util getReportConclusion", async () => {
     expect(
       getReportConclusion({
@@ -214,9 +216,14 @@ describe("Test Report doc", () => {
 
   })
 
+})
+
+describe("Test Report doc", () => {
+
+
   test("Test MD DOC", async () => {
 
-    const reportPath = createPerformanceReport(
+    const reportPath = await  createPerformanceReport(
       [
         {
           type: "lighthouse",
@@ -273,7 +280,7 @@ describe("Test Report doc", () => {
   })
 
   test("Test Default Doc", async () => {
-    const reportPath = createPerformanceReport(
+    const reportPath = await createPerformanceReport(
       [
         {
           type: "lighthouse",
@@ -326,5 +333,84 @@ describe("Test Report doc", () => {
       1000
     );
   });
+
+
+  test("Test Rerpont Png", async () => {
+
+    await createPerformanceReport(
+      [
+        {
+          type: "lighthouse",
+          result: {
+            baidu_com__: {
+              metircs: {
+                CLS: 0,
+                CLS_75: "0.000",
+                CLS_90: "0.000",
+                CLSList: [0,1,3,4,45],
+                FCP: 980,
+                FCP_75: "153.072",
+                FCP_90: "153.072",
+                FCPList: [153.072,153.072,153.072,153.072],
+                FID: 0,
+                FID_75: "1127.574",
+                FID_90: "1127.574",
+                FIDList: [1127.574,1000,1000,1000,1000],
+                LCP: 1315,
+                LCP_75: "298.144",
+                LCP_90: "298.144",
+                LCPList: [298.144,298,298,298,298,298],
+                TBT: 3,
+                TBTList: [17],
+                TBT_75: "17.000",
+                TBT_90: "17.000",
+                TTFB: "269.207",
+                TTFB: 722,
+                TTFB_75: "269.207",
+                TTFB_90: "269.207",
+                TTFBList: [269.207],
+                TTI: 0,
+                TTI_75: "1127.574",
+                TTI_90: "1127.574",
+                TTIList: [1127.574],
+              },
+              url: "http://baidu.com",
+            },
+          },
+        },
+      ],
+      {
+        outputPath: outputPathParent,
+        testTime: new Date(),
+        testTools: ["lighthouse"],
+        reportType: "md",
+        setting: {
+          userAgent: "xxxx",
+        },
+        iterations: 3,
+        lighthouseOptions: {
+          outputPath: "output/lighthouse",
+        },
+        metricsConfig: {
+          good: {
+            lcp: METRICS_CONFIG.GOOD.LCP,
+            cls: METRICS_CONFIG.GOOD.CLS,
+            fid: METRICS_CONFIG.GOOD.FID,
+          },
+          bad: {
+            lcp: METRICS_CONFIG.BAD.LCP,
+            cls: METRICS_CONFIG.BAD.CLS,
+            fid: METRICS_CONFIG.BAD.FID,
+          },
+        },
+        compareMetricsType:"avg"
+      }
+    );
+
+    expect(statSync(`${outputPathParent}/report.png`).size).toBeGreaterThan(
+      1000
+    );
+
+  })
 
 });

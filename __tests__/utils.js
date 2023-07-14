@@ -254,6 +254,11 @@ describe("get options", () => {
       urls: ["https://www.baidu.com"],
       iterations: 3,
       outputPath: "output",
+      setting:{
+        latency: 28, // 延迟
+        downloadKbps:100,
+        uploadKbps:  100,
+      },
       lighthouseConfig: {
         saveAssets: true,
         settings:{
