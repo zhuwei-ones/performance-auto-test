@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0-alpha.22](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.1.0-alpha.21...v1.1.0-alpha.22) (2023-07-15)
+
+
+### Features
+
+* 支持把lighthouse 报告转成图片 ([79856ee](https://github.com/zhuwei-ones/performance-auto-test/commit/79856eeab77021f581f041fb231a9a65ab5162c3))
+
 ## [1.1.0-alpha.21](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.1.0-alpha.20...v1.1.0-alpha.21) (2023-07-15)
 
 
