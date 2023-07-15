@@ -172,7 +172,9 @@ export const LIGHTHOUSE_DEFAULT_CONFIG = {
     skipAudits: ['uses-http2']
   },
   saveAssets: false,
-  saveAllJson: false
+  saveAllJson: false,
+  saveReport2Png: false
+
 };
 
 export const SITESPEED_DEFAULT_CONFIG = {

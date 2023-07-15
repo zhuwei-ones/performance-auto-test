@@ -1,4 +1,5 @@
 import { writeFile, writeJson } from 'fs-extra';
+import { createPngFormHtml } from './common';
 import { getLighthouseReportPath } from './get-value';
 
 export async function createLighthouseReport(options) {
@@ -8,18 +9,27 @@ export async function createLighthouseReport(options) {
     urlKey, index, outputPath, resultList, lighthouseConfig
   } = options;
 
-  const { saveAllJson, saveAssets } = lighthouseConfig;
+  const { saveAllJson, saveAssets, saveReport2Png } = lighthouseConfig;
 
   const { report: reportHtml, ...rest } = resultList;
-  const { htmlFilePath, allJsonFilePath, assetJsonFilePath } = getLighthouseReportPath({
+  const {
+    htmlFilePath, pngFilePath, allJsonFilePath, assetJsonFilePath
+  } = getLighthouseReportPath({
     outputPath,
     name: urlKey,
     index,
     saveAllJson,
-    saveAssets
+    saveAssets,
+    saveReport2Png
   });
 
-  const writeTasks = [writeFile(htmlFilePath, reportHtml)];
+  const writeTasks = [];
+
+  if (saveReport2Png) {
+    writeTasks.push(createPngFormHtml({ outputPath: pngFilePath, htmlContent: reportHtml }));
+  } else {
+    writeTasks.push(writeFile(htmlFilePath, reportHtml));
+  }
 
   if (saveAllJson) {
     writeTasks.push(

@@ -309,13 +309,16 @@ export const getMetricsStandardDataTable = (metricsConfig) => {
 export const getLighthouseReportLinks = ({
   toolOutputPath,
   outputPath,
-  result
+  result,
+  options
 }) => {
   const reportUrls = {};
+  const { lighthouseConfig } = options;
+  const { saveReport2Png } = lighthouseConfig;
   const urlDirs = glob.sync(`${toolOutputPath}/*`);
 
   urlDirs.forEach((dir) => {
-    const htmlList = glob.sync(`${dir}/*.html`);
+    const htmlList = glob.sync(`${dir}/*.${saveReport2Png ? 'png' : 'html'}`);
     const url = dir.match(/.+\/(.[^/]+)$/)?.[1];
 
     reportUrls[url] = htmlList.map((item, index) => {
@@ -593,7 +596,8 @@ export const createPerformanceReport = async (
         getToolReportLinkFunc({
           toolOutputPath: options[`${type}Options`].outputPath,
           outputPath,
-          result
+          result,
+          options: options[`${type}Options`]
         })
       );
 

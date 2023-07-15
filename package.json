@@ -87,6 +87,7 @@
     "lighthouse": "^9.6.8",
     "marked": "^4.2.12",
     "mdimg": "^0.2.3",
+    "node-html-to-image": "^3.3.0",
     "progress": "^2.0.3",
     "shelljs": "^0.8.5",
     "sitespeed.io": "^26.1.0",

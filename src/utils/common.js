@@ -2,6 +2,7 @@ import {
   ensureFileSync, statSync, writeFileSync
 } from 'fs-extra';
 import { convert2img } from 'mdimg';
+import nodeHtmlToImage from 'node-html-to-image';
 
 const echarts = require('echarts');
 
@@ -87,7 +88,6 @@ export async function getLineChartSvg({
   const path = `${outputPath}/${name}.svg`;
 
   ensureFileSync(path);
-
   writeFileSync(path, svgStr, 'utf-8');
 
   return `${name}.svg`;
@@ -104,4 +104,11 @@ export async function convertMd2pPng({
     cssTemplate: 'github'
   });
   return path;
+}
+
+export async function createPngFormHtml({ outputPath, htmlContent }) {
+  return nodeHtmlToImage({
+    output: outputPath,
+    html: htmlContent
+  });
 }

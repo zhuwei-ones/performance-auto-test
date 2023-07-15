@@ -75,6 +75,7 @@ describe("get options", () => {
           },
           saveAssets: false,
           saveAllJson: false,
+          saveReport2Png:false
         },
         lighthouseOptions: {
           onlyCategories: ["performance"],
@@ -247,6 +248,19 @@ describe("get options", () => {
     });
 
     expect(result4.lighthouseOptions.lighthouseConfig.saveAssets).toEqual(true);
+  });
+
+  test("Test getAllOptionsWithDefaultValue saveReport2Png", () => {
+    const result4 = getAllOptionsWithDefaultValue({
+      urls: ["https://www.baidu.com"],
+      iterations: 3,
+      outputPath: "output",
+      lighthouseConfig: {
+        saveReport2Png: true,
+      },
+    });
+
+    expect(result4.lighthouseOptions.lighthouseConfig.saveReport2Png).toEqual(true);
   });
 
   test("Test getAllOptionsWithDefaultValue lighthouse config", () => {
