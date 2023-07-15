@@ -1,6 +1,6 @@
 {
   "name": "@ones-ai/performace-auto-test",
-  "version": "1.1.0-alpha.20",
+  "version": "1.1.0-alpha.21",
   "description": "网站性能自动化测试，一键输出多工具性能报告",
   "main": "dist/index.js",
   "scripts": {

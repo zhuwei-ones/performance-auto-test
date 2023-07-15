@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0-alpha.21](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.1.0-alpha.20...v1.1.0-alpha.21) (2023-07-15)
+
+
+### Bug Fixes
+
+* 报告的折线图根据传入的指标类型来确定，不固定为 LCP、CLS、FID ([7bb7921](https://github.com/zhuwei-ones/performance-auto-test/commit/7bb792168dcdf69a7aeb52e484157dbe9a4ffe05))
+
 ## [1.1.0-alpha.20](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.1.0-alpha.19...v1.1.0-alpha.20) (2023-07-14)
 
 
