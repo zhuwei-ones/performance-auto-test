@@ -597,33 +597,21 @@ export const createPerformanceReport = async (
         })
       );
 
-      const [lcpSvg, clsSvg, fidSvg] = await Promise.all(
-        [
-          getToolCompareChartImg({
-            ...item,
-            outputPath,
-            metricsType: METRICS_MAP.LCP
-          }),
-          getToolCompareChartImg({
-            ...item,
-            outputPath,
-            metricsType: METRICS_MAP.CLS
-          }),
-          getToolCompareChartImg({
-            ...item,
-            outputPath,
-            metricsType: METRICS_MAP.FID
-          })
-        ]
+      const metricsSvgList = await Promise.all(
+        getCurrentMetricsStandard(metricsConfig.good).map((key) => getToolCompareChartImg({
+          ...item,
+          outputPath,
+          metricsType: key
+        }))
       );
 
-      if (lcpSvg || clsSvg || fidSvg) {
+      if (metricsSvgList.length > 0) {
         json.push({ h4: `${type} 折线图` });
-      }
 
-      json.push(lcpSvg);
-      json.push(clsSvg);
-      json.push(fidSvg);
+        metricsSvgList.forEach(metricsSvg=>{
+          json.push(metricsSvg);
+        });
+      }
     })
   );
   logger.info(
