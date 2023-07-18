@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0-alpha.24](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.1.0-alpha.23...v1.1.0-alpha.24) (2023-07-18)
+
+
+### Bug Fixes
+
+* 输出报告的lighthouse 详情报告链接顺序错误 ([5585385](https://github.com/zhuwei-ones/performance-auto-test/commit/55853857c6024e0abf8fea164ee7462afd46473b))
+
 ## [1.1.0-alpha.23](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.1.0-alpha.22...v1.1.0-alpha.23) (2023-07-18)
 
 
