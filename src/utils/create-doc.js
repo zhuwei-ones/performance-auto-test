@@ -5,7 +5,6 @@ import glob from 'glob';
 import { basename } from 'path';
 import {
   COLOR_MAP,
-  METRICS_MAP,
   METRICS_RANGE_MAP,
   METRICS_REPORT_MAP,
   METRICS_SECOND_UNIT,
@@ -318,17 +317,25 @@ export const getLighthouseReportLinks = ({
   const urlDirs = glob.sync(`${toolOutputPath}/*`);
 
   urlDirs.forEach((dir) => {
-    const htmlList = glob.sync(`${dir}/*.${saveReport2Png ? 'png' : 'html'}`);
+    const ext = saveReport2Png ? 'png' : 'html';
+    const htmlList = glob.sync(`${dir}/*.${ext}`);
     const url = dir.match(/.+\/(.[^/]+)$/)?.[1];
+    const reg = new RegExp(`(\\d+)\\.${ext}$`);
 
-    reportUrls[url] = htmlList.map((item, index) => {
-      return {
-        link: {
-          title: `run-${index + 1}`,
-          source: `${item.replace(`${outputPath}/`, '')}`
-        }
-      };
-    });
+    reportUrls[url] = htmlList
+      .sort((file1, file2) => {
+        const fileNameA = parseInt(file1.match(reg)?.[1], 10);
+        const fileNameB = parseInt(file2.match(reg)?.[1], 10);
+        return fileNameA - fileNameB;
+      })
+      .map((item, index) => {
+        return {
+          link: {
+            title: `run-${index + 1}`,
+            source: `${item.replace(`${outputPath}/`, '')}`
+          }
+        };
+      });
   });
 
   const content = Object.keys(reportUrls).map((urlKey) => {
@@ -612,7 +619,7 @@ export const createPerformanceReport = async (
       if (metricsSvgList.length > 0) {
         json.push({ h4: `${type} 折线图` });
 
-        metricsSvgList.forEach(metricsSvg=>{
+        metricsSvgList.forEach((metricsSvg) => {
           json.push(metricsSvg);
         });
       }
@@ -628,7 +635,10 @@ export const createPerformanceReport = async (
   try {
     await createReportPng(content, { outputPath });
   } catch (error) {
-    console.log('输出照片发生错误，但是为了不影响后续流程，所以不抛出错误，具体可以自己查看 \n\n', error);
+    console.log(
+      '输出照片发生错误，但是为了不影响后续流程，所以不抛出错误，具体可以自己查看 \n\n',
+      error
+    );
   }
 
   // console.log('md content--->', content);
