@@ -78,7 +78,7 @@ export function getRelativePath(path) {
 
 // dir/time/tool-name/
 export function getLighthouseReportPath({
-  outputPath, name, index, saveAllJson, saveAssetJson, saveReport2Png
+  outputPath, name, index, saveAllJson, saveAssetJson, saveReport2Png, isSaveUnAprroveReport
 }) {
   const prefixPath = `${outputPath}/${name}/${index}`;
   const result = {};
@@ -91,7 +91,7 @@ export function getLighthouseReportPath({
     ensureFileSync(result.htmlFilePath);
   }
 
-  if (saveAllJson) {
+  if (saveAllJson || isSaveUnAprroveReport) {
     result.allJsonFilePath = `${prefixPath}.all.json`;
     ensureFileSync(result.allJsonFilePath);
   }

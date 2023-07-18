@@ -78,7 +78,7 @@ describe("Test Ligthhouse Entry",()=>{
 
   test("lighthouse output trace json", async () => {
     const outputPath2 = `${outputPath}/${DEFAULT_LIGHTHOUSE_REPORT_DIR}`;
-    const result = await runLighthouse(url, {
+    await runLighthouse(url, {
       outputPath: outputPath2,
       urlKey: key,
       urlIndex: 1,
@@ -95,7 +95,7 @@ describe("Test Ligthhouse Entry",()=>{
 
   test("lighthouse output all json", async () => {
     const outputPath2 = `${outputPath}/${DEFAULT_LIGHTHOUSE_REPORT_DIR}`;
-    const result = await runLighthouse(url, {
+    await runLighthouse(url, {
       outputPath: outputPath2,
       urlKey: key,
       urlIndex: 1,
@@ -113,7 +113,7 @@ describe("Test Ligthhouse Entry",()=>{
 
   test("lighthouse output report to png", async () => {
     const outputPath2 = `${outputPath}/${DEFAULT_LIGHTHOUSE_REPORT_DIR}`;
-    const result = await runLighthouse(url, {
+    await runLighthouse(url, {
       outputPath: outputPath2,
       urlKey: key,
       urlIndex: 1,
@@ -127,5 +127,40 @@ describe("Test Ligthhouse Entry",()=>{
     expect(statSync(`${outputPath2}/${key}/1.png`).size).toBeGreaterThan(1000);
 
   })
-  
+
+  test("lighthouse output json when approve", async () => {
+    const outputPath2 = `${outputPath}/${DEFAULT_LIGHTHOUSE_REPORT_DIR}`;
+    await runLighthouse(url, {
+      outputPath: outputPath2,
+      urlKey: key,
+      urlIndex: 1,
+      lighthouseConfig: LIGHTHOUSE_DEFAULT_CONFIG,
+      lighthouseOptions: LIGHTHOUSE_DEFAULT_OPTIONS,
+      metricsConfig:{
+        good:{
+          lcp:4000,
+          cls:100,
+        }
+      }
+    });
+    expect(existsSync(`${outputPath2}/${key}/1.all.json`)).toBe(false);
+  })
+
+  test("lighthouse output json when unapprove", async () => {
+    const outputPath2 = `${outputPath}/${DEFAULT_LIGHTHOUSE_REPORT_DIR}`;
+    await runLighthouse(url, {
+      outputPath: outputPath2,
+      urlKey: key,
+      urlIndex: 1,
+      lighthouseConfig: LIGHTHOUSE_DEFAULT_CONFIG,
+      lighthouseOptions: LIGHTHOUSE_DEFAULT_OPTIONS,
+      metricsConfig:{
+        good:{
+          lcp:1,
+          cls:100,
+        }
+      }
+    });
+    expect(statSync(`${outputPath2}/${key}/1.all.json`).size).toBeGreaterThan(1000);
+  })
 })
