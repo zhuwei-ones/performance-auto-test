@@ -39,7 +39,7 @@ export function verifyOptions(options = {}) {
 
 export function getLighthouseOptions(optoins = {}) {
   const {
-    urls, iterations, outputPath, setting, lighthouseConfig = {}
+    urls, iterations, outputPath, setting, metricsConfig, lighthouseConfig = {}
   } = optoins;
 
   const {
@@ -57,6 +57,7 @@ export function getLighthouseOptions(optoins = {}) {
     }).flat(),
     iterations,
     outputPath: `${outputPath}/${DEFAULT_LIGHTHOUSE_REPORT_DIR}`,
+    metricsConfig,
     lighthouseConfig: {
       ...LIGHTHOUSE_DEFAULT_CONFIG,
       ...configRest,

@@ -24,7 +24,7 @@ const launchChromeAndRunLighthouse = async (url, options, config) => {
 
 export async function runLighthouse(url, options) {
   const {
-    outputPath, urlKey, urlIndex, lighthouseConfig, lighthouseOptions
+    outputPath, urlKey, urlIndex, lighthouseConfig, lighthouseOptions, metricsConfig
   } = options;
 
   let runnerResult = await launchChromeAndRunLighthouse(
@@ -41,7 +41,8 @@ export async function runLighthouse(url, options) {
     index: urlIndex,
     outputPath,
     resultList: runnerResult,
-    lighthouseConfig
+    lighthouseConfig,
+    metricsConfig
   });
 
   runnerResult = null;

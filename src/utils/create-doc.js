@@ -1,12 +1,10 @@
-import { ensureFileSync, writeFileSync } from 'fs-extra';
+import { ensureFileSync, readFileSync, writeFileSync } from 'fs-extra';
 import json2md from 'json2md';
 import { marked } from 'marked';
 import glob from 'glob';
 import { basename } from 'path';
 import {
   COLOR_MAP,
-  KBPS_NAME,
-  METRICS_MAP,
   METRICS_RANGE_MAP,
   METRICS_REPORT_MAP,
   METRICS_SECOND_UNIT,
@@ -22,7 +20,7 @@ import {
   kbToMb
 } from './get-value';
 import { logger } from './log';
-import { getLineChartSvg } from './common';
+import { convertMd2pPng, getLineChartSvg } from './common';
 import dayjs from 'dayjs';
 
 json2md.converters.redText = (input) => {
@@ -248,12 +246,11 @@ export const getToolCompareTableData = ({
   };
 };
 
-export const getToolCompareChartImg = (data) => {
+export const getToolCompareChartImg = async (data) => {
   const {
     result, outputPath, type, metricsType
   } = data;
   const urls = Object.keys(result);
-
   const listData = [];
 
   for (let i = 0; i < urls.length; i += 1) {
@@ -272,7 +269,7 @@ export const getToolCompareChartImg = (data) => {
     });
   }
 
-  const path = getLineChartSvg({
+  const path = await getLineChartSvg({
     list: listData,
     title: metricsType,
     outputPath: outputPath,
@@ -311,23 +308,34 @@ export const getMetricsStandardDataTable = (metricsConfig) => {
 export const getLighthouseReportLinks = ({
   toolOutputPath,
   outputPath,
-  result
+  result,
+  options
 }) => {
   const reportUrls = {};
+  const { lighthouseConfig } = options;
+  const { saveReport2Png } = lighthouseConfig;
   const urlDirs = glob.sync(`${toolOutputPath}/*`);
 
   urlDirs.forEach((dir) => {
-    const htmlList = glob.sync(`${dir}/*.html`);
+    const ext = saveReport2Png ? 'png' : 'html';
+    const htmlList = glob.sync(`${dir}/*.${ext}`);
     const url = dir.match(/.+\/(.[^/]+)$/)?.[1];
+    const reg = new RegExp(`(\\d+)\\.${ext}$`);
 
-    reportUrls[url] = htmlList.map((item, index) => {
-      return {
-        link: {
-          title: `run-${index + 1}`,
-          source: `${item.replace(`${outputPath}/`, '')}`
-        }
-      };
-    });
+    reportUrls[url] = htmlList
+      .sort((file1, file2) => {
+        const fileNameA = parseInt(file1.match(reg)?.[1], 10);
+        const fileNameB = parseInt(file2.match(reg)?.[1], 10);
+        return fileNameA - fileNameB;
+      })
+      .map((item, index) => {
+        return {
+          link: {
+            title: `run-${index + 1}`,
+            source: `${item.replace(`${outputPath}/`, '')}`
+          }
+        };
+      });
   });
 
   const content = Object.keys(reportUrls).map((urlKey) => {
@@ -428,7 +436,9 @@ export const getTestEnvTableData = (options) => {
     },
     {
       title: '网络状态',
-      value: `上传速度：${kbToMb(downloadKbps)}，下载速度：${kbToMb(uploadKbps)}，延迟：${latency}ms`
+      value: `上传速度：${kbToMb(downloadKbps)}，下载速度：${kbToMb(
+        uploadKbps
+      )}，延迟：${latency}ms`
     },
     {
       title: '浏览器信息',
@@ -501,7 +511,36 @@ export const createReportFile = (content, options) => {
   return createHtmlReport(content, options);
 };
 
-export const createPerformanceReport = (performanceResultList, options) => {
+export const createReportPng = (content, options) => {
+  const { outputPath } = options;
+  const regex = /!\[.*?\]\((.*?)\)/g;
+  let match = regex.exec(content);
+  let mdContent = content;
+
+  while (match) {
+    // 使用正则表达式获取图片路径
+    const imageContent = match[1];
+    const [imagePath] = imageContent.split(' ');
+
+    // 读取图片文件并转换为 base64 编码
+    const imageBase64 = readFileSync(`${outputPath}/${imagePath}`, 'utf-8');
+    const base64Data = Buffer.from(imageBase64).toString('base64');
+
+    // 替换原始的图片路径为 base64 编码
+    mdContent = mdContent.replace(
+      imagePath,
+      `data:image/svg+xml;base64,${base64Data}`
+    );
+    match = regex.exec(content);
+  }
+
+  return convertMd2pPng({ mdContent, outputPath });
+};
+
+export const createPerformanceReport = async (
+  performanceResultList,
+  options
+) => {
   const {
     outputPath,
     metricsConfig,
@@ -554,50 +593,53 @@ export const createPerformanceReport = (performanceResultList, options) => {
     })
   );
 
-  performanceResultList.forEach((item) => {
-    const { type, result } = item;
-    const getToolReportLinkFunc = TOOL_REPORT_LINK_FUNC_MAP[type];
+  await Promise.all(
+    performanceResultList.map(async (item) => {
+      const { type, result } = item;
+      const getToolReportLinkFunc = TOOL_REPORT_LINK_FUNC_MAP[type];
 
-    json.push({ h3: `${type} 具体报告` });
-    json.push(
-      getToolReportLinkFunc({
-        toolOutputPath: options[`${type}Options`].outputPath,
-        outputPath,
-        result
-      })
-    );
+      json.push({ h3: `${type} 具体报告` });
+      json.push(
+        getToolReportLinkFunc({
+          toolOutputPath: options[`${type}Options`].outputPath,
+          outputPath,
+          result,
+          options: options[`${type}Options`]
+        })
+      );
 
-    const lcpSvg = getToolCompareChartImg({
-      ...item,
-      outputPath,
-      metricsType: METRICS_MAP.LCP
-    });
-    const clsSvg = getToolCompareChartImg({
-      ...item,
-      outputPath,
-      metricsType: METRICS_MAP.CLS
-    });
-    const fidSvg = getToolCompareChartImg({
-      ...item,
-      outputPath,
-      metricsType: METRICS_MAP.FID
-    });
+      const metricsSvgList = await Promise.all(
+        getCurrentMetricsStandard(metricsConfig.good).map((key) => getToolCompareChartImg({
+          ...item,
+          outputPath,
+          metricsType: key
+        }))
+      );
 
-    if (lcpSvg || clsSvg || fidSvg) {
-      json.push({ h4: `${type} 折线图` });
-    }
+      if (metricsSvgList.length > 0) {
+        json.push({ h4: `${type} 折线图` });
 
-    json.push(lcpSvg);
-    json.push(clsSvg);
-    json.push(fidSvg);
-  });
-
+        metricsSvgList.forEach((metricsSvg) => {
+          json.push(metricsSvg);
+        });
+      }
+    })
+  );
   logger.info(
     'report result json--->',
     JSON.stringify(json, null, { space: 2 })
   );
 
   const content = json2md(json);
+
+  try {
+    await createReportPng(content, { outputPath });
+  } catch (error) {
+    console.log(
+      '输出照片发生错误，但是为了不影响后续流程，所以不抛出错误，具体可以自己查看 \n\n',
+      error
+    );
+  }
 
   // console.log('md content--->', content);
 

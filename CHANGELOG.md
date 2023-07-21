@@ -2,9 +2,42 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [1.2.0](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.1.0...v1.2.0) (2023-07-21)
+## [1.3.0](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.1.0-alpha.24...v1.3.0) (2023-07-21)
 
-## [1.1.0](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.1.0-alpha.19...v1.1.0) (2023-07-21)
+## [1.1.0-alpha.24](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.1.0-alpha.23...v1.1.0-alpha.24) (2023-07-18)
+
+
+### Bug Fixes
+
+* 输出报告的lighthouse 详情报告链接顺序错误 ([5585385](https://github.com/zhuwei-ones/performance-auto-test/commit/55853857c6024e0abf8fea164ee7462afd46473b))
+
+## [1.1.0-alpha.23](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.1.0-alpha.22...v1.1.0-alpha.23) (2023-07-18)
+
+
+### Features
+
+* lighthouse 如果某次报告不通过，就保存输出的json 数据，用于Performance分析 ([fc5a5ee](https://github.com/zhuwei-ones/performance-auto-test/commit/fc5a5ee09e5aea4583456c22fcbd530702acb2ee))
+
+## [1.1.0-alpha.22](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.1.0-alpha.21...v1.1.0-alpha.22) (2023-07-15)
+
+
+### Features
+
+* 支持把lighthouse 报告转成图片 ([79856ee](https://github.com/zhuwei-ones/performance-auto-test/commit/79856eeab77021f581f041fb231a9a65ab5162c3))
+
+## [1.1.0-alpha.21](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.1.0-alpha.20...v1.1.0-alpha.21) (2023-07-15)
+
+
+### Bug Fixes
+
+* 报告的折线图根据传入的指标类型来确定，不固定为 LCP、CLS、FID ([7bb7921](https://github.com/zhuwei-ones/performance-auto-test/commit/7bb792168dcdf69a7aeb52e484157dbe9a4ffe05))
+
+## [1.1.0-alpha.20](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.1.0-alpha.19...v1.1.0-alpha.20) (2023-07-14)
+
+
+### Features
+
+* 支持输出报告为图片，方便查看 ([b501687](https://github.com/zhuwei-ones/performance-auto-test/commit/b501687a7baf6aceeb27eb8c4bb394af58a52dbc))
 
 ## [1.1.0-alpha.19](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.1.0-alpha.18...v1.1.0-alpha.19) (2023-07-11)
 
