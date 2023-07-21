@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.1.0-alpha.24...v1.3.0) (2023-07-21)
+
 ## [1.1.0-alpha.24](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.1.0-alpha.23...v1.1.0-alpha.24) (2023-07-18)
 
 
