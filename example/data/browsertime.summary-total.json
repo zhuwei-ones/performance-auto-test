@@ -1,0 +1,311 @@
+{
+  "timings": {
+    "fullyLoaded": {
+      "median": 1744,
+      "mean": 1746,
+      "min": 1384,
+      "p90": 2109,
+      "max": 2109
+    },
+    "largestContentfulPaint": {
+      "median": 617,
+      "mean": 590,
+      "min": 436,
+      "p90": 718,
+      "max": 718
+    }
+  },
+  "googleWebVitals": {
+    "cumulativeLayoutShift": {
+      "median": 0,
+      "mean": 0,
+      "min": 0,
+      "p90": 0,
+      "max": 0
+    },
+    "ttfb": { "median": 416, "mean": 455, "min": 338, "p90": 612, "max": 612 },
+    "largestContentfulPaint": {
+      "median": 617,
+      "mean": 590,
+      "min": 436,
+      "p90": 718,
+      "max": 718
+    },
+    "firstContentfulPaint": {
+      "median": 516,
+      "mean": 539,
+      "min": 422,
+      "p90": 679,
+      "max": 679
+    },
+    "firstInputDelay": { "median": 0, "mean": 0, "min": 0, "p90": 0, "max": 0 },
+    "totalBlockingTime": {
+      "median": 0,
+      "mean": 0,
+      "min": 0,
+      "p90": 0,
+      "max": 0
+    }
+  },
+  "firstPaint": {
+    "median": 516,
+    "mean": 539,
+    "min": 422,
+    "p90": 679,
+    "max": 679
+  },
+  "navigationTiming": {
+    "connectStart": {
+      "median": 165,
+      "mean": 203,
+      "min": 136,
+      "p90": 309,
+      "max": 309
+    },
+    "domComplete": {
+      "median": 1466,
+      "mean": 1418,
+      "min": 1085,
+      "p90": 1704,
+      "max": 1704
+    },
+    "domContentLoadedEventEnd": {
+      "median": 1171,
+      "mean": 1064,
+      "min": 720,
+      "p90": 1300,
+      "max": 1300
+    },
+    "domContentLoadedEventStart": {
+      "median": 1167,
+      "mean": 1059,
+      "min": 717,
+      "p90": 1294,
+      "max": 1294
+    },
+    "domInteractive": {
+      "median": 1113,
+      "mean": 993,
+      "min": 708,
+      "p90": 1157,
+      "max": 1157
+    },
+    "domainLookupEnd": {
+      "median": 165,
+      "mean": 203,
+      "min": 136,
+      "p90": 309,
+      "max": 309
+    },
+    "domainLookupStart": {
+      "median": 164,
+      "mean": 202,
+      "min": 135,
+      "p90": 307,
+      "max": 307
+    },
+    "duration": {
+      "median": 1469,
+      "mean": 1426,
+      "min": 1094,
+      "p90": 1714,
+      "max": 1714
+    },
+    "fetchStart": {
+      "median": 164,
+      "mean": 201,
+      "min": 134,
+      "p90": 306,
+      "max": 306
+    },
+    "loadEventEnd": {
+      "median": 1469,
+      "mean": 1426,
+      "min": 1094,
+      "p90": 1714,
+      "max": 1714
+    },
+    "loadEventStart": {
+      "median": 1466,
+      "mean": 1418,
+      "min": 1085,
+      "p90": 1704,
+      "max": 1704
+    },
+    "requestStart": {
+      "median": 268,
+      "mean": 300,
+      "min": 202,
+      "p90": 431,
+      "max": 431
+    },
+    "responseEnd": {
+      "median": 535,
+      "mean": 518,
+      "min": 381,
+      "p90": 637,
+      "max": 637
+    },
+    "responseStart": {
+      "median": 416,
+      "mean": 455,
+      "min": 338,
+      "p90": 612,
+      "max": 612
+    },
+    "secureConnectionStart": {
+      "median": 190,
+      "mean": 228,
+      "min": 149,
+      "p90": 345,
+      "max": 345
+    }
+  },
+  "pageTimings": {
+    "backEndTime": {
+      "median": 416,
+      "mean": 455,
+      "min": 338,
+      "p90": 612,
+      "max": 612
+    },
+    "domContentLoadedTime": {
+      "median": 1167,
+      "mean": 1059,
+      "min": 717,
+      "p90": 1294,
+      "max": 1294
+    },
+    "domInteractiveTime": {
+      "median": 1113,
+      "mean": 993,
+      "min": 708,
+      "p90": 1157,
+      "max": 1157
+    },
+    "domainLookupTime": {
+      "median": 1,
+      "mean": 1,
+      "min": 1,
+      "p90": 1,
+      "max": 1
+    },
+    "frontEndTime": {
+      "median": 931,
+      "mean": 901,
+      "min": 704,
+      "p90": 1067,
+      "max": 1067
+    },
+    "pageDownloadTime": {
+      "median": 42,
+      "mean": 62,
+      "min": 25,
+      "p90": 120,
+      "max": 120
+    },
+    "pageLoadTime": {
+      "median": 1466,
+      "mean": 1418,
+      "min": 1085,
+      "p90": 1704,
+      "max": 1704
+    },
+    "redirectionTime": { "median": 0, "mean": 0, "min": 0, "p90": 0, "max": 0 },
+    "serverConnectionTime": {
+      "median": 103,
+      "mean": 97,
+      "min": 66,
+      "p90": 123,
+      "max": 123
+    },
+    "serverResponseTime": {
+      "median": 206,
+      "mean": 217,
+      "min": 179,
+      "p90": 267,
+      "max": 267
+    }
+  },
+  "paintTiming": {
+    "first-contentful-paint": {
+      "median": 516,
+      "mean": 539,
+      "min": 422,
+      "p90": 679,
+      "max": 679
+    },
+    "first-paint": {
+      "median": 516,
+      "mean": 539,
+      "min": 422,
+      "p90": 679,
+      "max": 679
+    }
+  },
+  "cpu": {
+    "longTasks": {
+      "tasks": { "median": 0, "mean": 0, "min": 0, "p90": 0, "max": 0 },
+      "totalDuration": { "median": 0, "mean": 0, "min": 0, "p90": 0, "max": 0 },
+      "totalBlockingTime": {
+        "median": 0,
+        "mean": 0,
+        "min": 0,
+        "p90": 0,
+        "max": 0
+      },
+      "maxPotentialFid": {
+        "median": 0,
+        "mean": 0,
+        "min": 0,
+        "p90": 0,
+        "max": 0
+      }
+    },
+    "categories": {
+      "parseHTML": {
+        "median": 37,
+        "mean": 37,
+        "min": 34,
+        "p90": 39,
+        "max": 39
+      },
+      "styleLayout": {
+        "median": 39,
+        "mean": 41,
+        "min": 38,
+        "p90": 45,
+        "max": 45
+      },
+      "paintCompositeRender": {
+        "median": 6,
+        "mean": 7,
+        "min": 6,
+        "p90": 8,
+        "max": 8
+      },
+      "scriptParseCompile": {
+        "median": 3,
+        "mean": 3,
+        "min": 3,
+        "p90": 3,
+        "max": 3
+      },
+      "scriptEvaluation": {
+        "median": 239,
+        "mean": 235,
+        "min": 212,
+        "p90": 254,
+        "max": 254
+      },
+      "garbageCollection": {
+        "median": 3,
+        "mean": 7,
+        "min": 3,
+        "p90": 14,
+        "max": 14
+      },
+      "other": { "median": 79, "mean": 80, "min": 75, "p90": 87, "max": 87 }
+    }
+  }
+}
