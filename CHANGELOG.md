@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.0-alpha.1](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.4.0-alpha.0...v1.4.0-alpha.1) (2023-09-07)
+
+
+### Features
+
+*  format  hooks performance result ([3c5c0f3](https://github.com/zhuwei-ones/performance-auto-test/commit/3c5c0f37491a986ffffb395e8afe73c35aa7485c))
+
 ## [1.4.0-alpha.0](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.3.0...v1.4.0-alpha.0) (2023-09-07)
 
 
