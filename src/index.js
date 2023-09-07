@@ -17,7 +17,13 @@ async function PerformanceTest(options) {
   const taskList = getTaskList(currentOptions);
 
   // [{type,result}]
-  const taskResultList = await runTasks(taskList);
+  const taskResultList = await runTasks(taskList, {
+    onDone: currentOptions.onDone,
+    onBegin: currentOptions.onBegin,
+    onError: currentOptions.onError,
+    onEnd: currentOptions.onEnd,
+    onAllDone: currentOptions.onAllDone
+  });
 
   try {
     logger.info('正在输出性能报告');
