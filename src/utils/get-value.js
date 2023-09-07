@@ -14,8 +14,10 @@ import {
   COMPARE_METRICS_TYPE_MAP,
   CWD,
   METRICS_LIGHTHOUSE_MAP,
+  METRICS_SECOND_UNIT,
   METRICS_SITESPEED_MAP,
   METRICS_STANDARD_MAP,
+  PERFORMANCE_TOOLS_MAP,
   SITESPEED_JSON_RESULT_DIR
 } from '../const';
 import { logger } from './log';
@@ -210,6 +212,54 @@ export function getSitespeedCommand(url, options = {}) {
   return command;
 }
 
+// 把6大性能指标提取出来
+export function getLighthouseWebVital(result) {
+  const metricsList = Object.keys(METRICS_LIGHTHOUSE_MAP);
+  return metricsList.reduce((preValue, metricsKey) => {
+    const name = METRICS_LIGHTHOUSE_MAP[metricsKey];
+    let value = Number(result?.[name]?.numericValue?.toFixed(3));
+
+    if (value && METRICS_SECOND_UNIT.includes(metricsKey)) {
+      value *= 1000;
+    }
+
+    return {
+      ...preValue,
+      [metricsKey]: value ?? -0.1
+    };
+  }, {});
+}
+
+// 把6大性能指标提取出来
+export function getSitespeedWebVital(result) {
+  const metricsList = Object.keys(METRICS_SITESPEED_MAP);
+  const googleWebVitals = result.googleWebVitals;
+  const currentUrlMetircs = metricsList.reduce((preInfo, mtsKey) => {
+    const googleWebVitalsKey = METRICS_SITESPEED_MAP[mtsKey];
+    const value = Number(googleWebVitals?.[googleWebVitalsKey]?.median);
+
+    if (value && METRICS_SECOND_UNIT.includes(mtsKey)) {
+      value *= 1000;
+    }
+
+    return {
+      ...preInfo,
+      [mtsKey]: value ?? -0.1
+    };
+  }, {});
+  return currentUrlMetircs;
+}
+
+const RESULT_DEAL_MAP = {
+  [PERFORMANCE_TOOLS_MAP.SITESPEED]: getSitespeedWebVital,
+  [PERFORMANCE_TOOLS_MAP.LIGHTHOUSE]: getLighthouseWebVital
+};
+
+export function getRunnerResultWebVitals({ type, result }) {
+  const func = RESULT_DEAL_MAP[type];
+  return func?.(result) || result;
+}
+
 export function getLighthouseWebVitals(lighthouseResultList = []) {
   const metricsList = Object.keys(METRICS_LIGHTHOUSE_MAP);
   const allUrls = Object.keys(lighthouseResultList);
@@ -224,20 +274,7 @@ export function getLighthouseWebVitals(lighthouseResultList = []) {
 
     const currentUrlMetircs = resultList
       // 性能结果对象数组 精简成 6大性能指标数组
-      .map((re) => {
-        const audits = re;
-
-        // console.log('audits', audits);
-
-        // 把6大性能指标提取出来
-        return metricsList.reduce((preValue, metricsKey) => {
-          const name = METRICS_LIGHTHOUSE_MAP[metricsKey];
-          return {
-            ...preValue,
-            [metricsKey]: +(audits[name]?.numericValue?.toFixed(3) ?? -0.1)
-          };
-        }, {});
-      });
+      .map((re) => getLighthouseWebVital(re));
 
     const avgMetircs = currentUrlMetircs
       // 把所有结果相同指标相加合并
@@ -296,7 +333,6 @@ export function readSitespeedJsonReport(dir) {
 }
 
 export function getSitespeedWebVitals(sitespeedResultList) {
-  const metricsList = Object.keys(METRICS_SITESPEED_MAP);
   const allUrls = Object.keys(sitespeedResultList);
 
   // console.log('sitespeedResultList', sitespeedResultList);
@@ -304,16 +340,10 @@ export function getSitespeedWebVitals(sitespeedResultList) {
   return allUrls.reduce((pre, url) => {
     const result = sitespeedResultList[url];
     const resultList = result?.resultList || [];
-    const googleWebVitals = resultList?.[0].googleWebVitals;
+    // const googleWebVitals = resultList?.[0].googleWebVitals;
     const urlMetrics = pre;
 
-    const currentUrlMetircs = metricsList.reduce((preInfo, mtsKey) => {
-      const googleWebVitalsKey = METRICS_SITESPEED_MAP[mtsKey];
-      return {
-        ...preInfo,
-        [mtsKey]: googleWebVitals?.[googleWebVitalsKey]?.median ?? -0.1
-      };
-    }, {});
+    const currentUrlMetircs = getSitespeedWebVital(resultList?.[0]);
 
     urlMetrics[url] = {
       url: result.url,

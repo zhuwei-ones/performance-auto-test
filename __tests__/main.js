@@ -98,22 +98,24 @@ test("Test Main Entry Only Sitespeed", async () => {
 
 test("Test Main Entry With Hooks", async () => {
   const hookResult = {};
+  let doneResult = {}
 
   await PerformanceTest({
     urls: [url],
     iterations: 1,
     outputPath: _oupAbsolute,
     sitespeed: false,
-    onDone: (...result) => {
+    onDone: ({result}) => {
       hookResult.onDone = true;
+      doneResult=result
     },
-    onBegin: (...result) => {
+    onBegin: () => {
       hookResult.onBegin = true;
     },
-    onEnd: (...result) => {
+    onEnd: () => {
       hookResult.onEnd = true;
     },
-    onAllDone: (...result) => {
+    onAllDone: () => {
       hookResult.onAllDone = true;
     },
   });
@@ -124,6 +126,9 @@ test("Test Main Entry With Hooks", async () => {
     onEnd: true,
     onAllDone: true,
   });
+  expect(doneResult.LCP).toBeGreaterThanOrEqual(0)
+  expect(doneResult.CLS).toBeGreaterThanOrEqual(0)
+  expect(doneResult.FCP).toBeGreaterThanOrEqual(0)
 });
 
 test("Test Main Entry With Interrupt", async () => {
@@ -132,8 +137,10 @@ test("Test Main Entry With Interrupt", async () => {
     iterations: 4,
     outputPath: _oupAbsolute,
     sitespeed: false,
-    onDone: ({index}) => {
+    onDone: ({index,result}) => {
       if(index===2){
+      console.log("result",result)
+
         return { interrupt: true}
       }
     },

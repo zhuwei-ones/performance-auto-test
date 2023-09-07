@@ -3,7 +3,7 @@ import ProgressBar from 'progress';
 import { PERFORMANCE_TOOLS_LIST, PERFORMANCE_TOOLS_MAP } from '../const';
 import { runLighthouse } from '../lib/lighthouse';
 import { runSitespeed } from '../lib/sitespeed';
-import { getLighthouseWebVitals, getSitespeedWebVitals } from './get-value';
+import { getLighthouseWebVitals, getRunnerResultWebVitals, getSitespeedWebVitals } from './get-value';
 import { logger } from './log';
 
 const TASK_MAP = {
@@ -30,7 +30,7 @@ export async function runTask(func, { options, lifecycles } = {}) {
     // 测试工具的报告
     const runnerResult = await func();
     const { interrupt = false } = await onDone?.({
-      tool, url, index, result: runnerResult
+      tool, url, index, result: getRunnerResultWebVitals({ type: tool, result: runnerResult })
     }) || {};
     logger.success(`${tool} 测试 ${url} ，第 ${index} 次完成 `);
 
