@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.0-alpha.0](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.3.0...v1.4.0-alpha.0) (2023-09-07)
+
+
+### Features
+
+* support hooks to control if Interrupt the performance test ([a97168c](https://github.com/zhuwei-ones/performance-auto-test/commit/a97168c461db3c7e4dbf5cf8ff9fbf011d45ffe3))
+
+## [1.2.0](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.1.0...v1.2.0) (2023-07-21)
+
+## [1.1.0](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.1.0-alpha.24...v1.1.0) (2023-07-21)
+
 ## [1.3.0](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.1.0-alpha.24...v1.3.0) (2023-07-21)
 
 ## [1.1.0-alpha.24](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.1.0-alpha.23...v1.1.0-alpha.24) (2023-07-18)
