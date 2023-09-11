@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.0-alpha.2](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.4.0-alpha.1...v1.4.0-alpha.2) (2023-09-11)
+
+
+### Bug Fixes
+
+* cls 指标应该在报告数据出来时就统一单位，而不是等到用到数据时才开始转换，处理时机不对 ([07fc2bb](https://github.com/zhuwei-ones/performance-auto-test/commit/07fc2bb5a676cfe3b5e7eebab45fef5eea7fc5a9))
+
 ## [1.4.0-alpha.1](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.4.0-alpha.0...v1.4.0-alpha.1) (2023-09-07)
 
 
