@@ -219,6 +219,7 @@ export function getLighthouseWebVital(result) {
     const name = METRICS_LIGHTHOUSE_MAP[metricsKey];
     let value = Number(result?.[name]?.numericValue?.toFixed(3));
 
+    // 同一把所有指标都统一成一个单位
     if (value && METRICS_SECOND_UNIT.includes(metricsKey)) {
       value *= 1000;
     }
@@ -238,6 +239,7 @@ export function getSitespeedWebVital(result) {
     const googleWebVitalsKey = METRICS_SITESPEED_MAP[mtsKey];
     const value = Number(googleWebVitals?.[googleWebVitalsKey]?.median);
 
+    // 同一把所有指标都统一成一个单位
     if (value && METRICS_SECOND_UNIT.includes(mtsKey)) {
       value *= 1000;
     }

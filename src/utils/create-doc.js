@@ -105,13 +105,6 @@ export const getReportConclusion = ({
 
           const metricsLowerKey = metricsKey.toLowerCase();
           const goodMetricsVal = goodMetrics[metricsLowerKey];
-
-          // 需要一个地方，同一把所有指标都统一成一个单位
-          // 如果不是 s 单位的，就需要除1000
-          if (METRICS_SECOND_UNIT.includes(metricsKey)) {
-            pageMetrics *= 1000;
-          }
-
           const isBest = goodMetricsVal && goodMetricsVal >= pageMetrics;
 
           return !isBest;
@@ -173,12 +166,10 @@ export const getToolCompareTableData = ({
         const badMetricsVal = badMetrics[metricsLowerKey];
 
         if (typeof pageMetricsAvg !== 'undefined') {
-          // 如果不是 s 单位的，就需要除1000
-          if (!METRICS_SECOND_UNIT.includes(metricsKey)) {
-            pageMetricsAvg = (pageMetricsAvg / 1000).toFixed(3);
-            pageMetrics75 = (pageMetrics75 / 1000).toFixed(3);
-            pageMetrics90 = (pageMetrics90 / 1000).toFixed(3);
-          }
+          // 毫秒 转成 秒 单位
+          pageMetricsAvg = (pageMetricsAvg / 1000).toFixed(3);
+          pageMetrics75 = (pageMetrics75 / 1000).toFixed(3);
+          pageMetrics90 = (pageMetrics90 / 1000).toFixed(3);
 
           const goodMetricsMSVal = goodMetricsVal / 1000;
           const badMetricsMSVal = badMetricsVal / 1000;
