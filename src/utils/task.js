@@ -3,7 +3,7 @@ import ProgressBar from 'progress';
 import { PERFORMANCE_TOOLS_LIST, PERFORMANCE_TOOLS_MAP } from '../const';
 import { runLighthouse } from '../lib/lighthouse';
 import { runSitespeed } from '../lib/sitespeed';
-import { getLighthouseWebVitals, getSitespeedWebVitals } from './get-value';
+import { getLighthouseWebVitals, getRunnerResultWebVitals, getSitespeedWebVitals } from './get-value';
 import { logger } from './log';
 
 const TASK_MAP = {
@@ -25,14 +25,22 @@ export async function runTask(func, { options, lifecycles } = {}) {
 
   try {
     onBegin?.({ tool, url });
-    logger.info(`${tool} 开始第${index} 次测试 ${url} `);
-    const result = await func();
-    onDone?.({ tool, url });
-    logger.success(`${tool} 测试 ${url}} ，第${index} 次完成`);
-    return result;
+    logger.info(`${tool} 开始第 ${index} 次测试 ${url} `);
+
+    // 测试工具的报告
+    const runnerResult = await func();
+    const { interrupt = false } = await onDone?.({
+      tool, url, index, result: getRunnerResultWebVitals({ type: tool, result: runnerResult })
+    }) || {};
+    logger.success(`${tool} 测试 ${url} ，第 ${index} 次完成 `);
+
+    return {
+      runnerResult,
+      interrupt
+    };
   } catch (error) {
     onError?.(error);
-    logger.error(`${tool} 测试第${index} 次 ${url}} 失败`, error);
+    logger.error(`${tool} 测试第 ${index} 次 ${url} 失败 `, error);
     throw error;
   } finally {
     onEnd?.({ tool });
@@ -64,8 +72,17 @@ export async function runPerformanceTasks(taskList, lifecycles = {}) {
         const currentToolResult = await waterfall(
           urls.map(({ url, urlKey, index })=>{
             return async (preUrlTestResult = {})=>{
-              return runTask(async ()=>{
-                const runnerResult = await taskFunc(url, {
+              const { interrupt = false } = preUrlTestResult;
+
+              // 如果上一个url已经终止，剩余的url不再测试
+              if (interrupt) {
+                return preUrlTestResult;
+              }
+
+              // runTask 会返回是否终止后续测试
+              const runResult = await runTask(async ()=>{
+                // 单次报告的测试结果
+                const result = await taskFunc(url, {
                   ...taskOptions,
                   urlIndex: index,
                   urlKey: urlKey
@@ -73,17 +90,31 @@ export async function runPerformanceTasks(taskList, lifecycles = {}) {
 
                 progressBar.tick(1);
 
-                return {
-                  ...preUrlTestResult,
-                  [urlKey]: {
-                    url,
-                    resultList: [...(preUrlTestResult?.[urlKey]?.resultList || []), runnerResult]
-                  }
-                };
-              }, { options: { tool: type, url, index }, lifecycles });
+                return result;
+              }, {
+                options: {
+                  tool: type, url, index
+                },
+                lifecycles
+              });
+
+              const { runnerResult } = runResult;
+              const preResult = preUrlTestResult?.[urlKey]?.resultList || [];
+              const finallyResult = [...preResult, runnerResult];
+
+              return {
+                ...preUrlTestResult,
+                [urlKey]: {
+                  url,
+                  resultList: finallyResult
+                },
+                interrupt: runResult.interrupt
+              };
             };
           })
         );
+
+        delete currentToolResult.interrupt;
 
         return {
           ...preToolResult,
@@ -131,6 +162,7 @@ export async function runTasks(task, lifecycles = {}) {
   const {
     onAllDone
   } = lifecycles;
+
   const taskResultList = await runPerformanceTasks(task, lifecycles);
 
   const finalResult = await getTaskResult(taskResultList);

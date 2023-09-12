@@ -25,7 +25,13 @@ export function verifyOptions(options = {}) {
     lighthouse: Joi.boolean(),
     sitespeed: Joi.boolean(),
     reportType: [...Object.values(REPORT_TYPE_MAP)],
-    compareMetricsType: [...Object.values(COMPARE_METRICS_TYPE_MAP)]
+    compareMetricsType: [...Object.values(COMPARE_METRICS_TYPE_MAP)],
+
+    onDone: Joi.function(),
+    onBegin: Joi.function(),
+    onError: Joi.function(),
+    onEnd: Joi.function(),
+    onAllDone: Joi.function()
   });
 
   const result = schema.validate(options);
@@ -128,7 +134,12 @@ export function getDefaultOptions(options) {
   const {
     iterations,
     outputPath,
-    metricsConfig = {}
+    metricsConfig = {},
+    onDone,
+    onBegin,
+    onError,
+    onEnd,
+    onAllDone
   } = options;
 
   const testTime = new Date();
@@ -179,7 +190,13 @@ export function getDefaultOptions(options) {
 
     // 默认开启所有的测试工具
     [PERFORMANCE_TOOLS_MAP.LIGHTHOUSE]: options[PERFORMANCE_TOOLS_MAP.LIGHTHOUSE] ?? true,
-    [PERFORMANCE_TOOLS_MAP.SITESPEED]: options[PERFORMANCE_TOOLS_MAP.SITESPEED] ?? true
+    [PERFORMANCE_TOOLS_MAP.SITESPEED]: options[PERFORMANCE_TOOLS_MAP.SITESPEED] ?? true,
+
+    onDone,
+    onBegin,
+    onError,
+    onEnd,
+    onAllDone
 
   };
 }
