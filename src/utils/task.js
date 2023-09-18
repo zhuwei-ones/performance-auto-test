@@ -39,7 +39,17 @@ export async function runTask(func, { options, lifecycles } = {}) {
 
     return {
       runnerResult,
-      interrupt
+
+      /**
+       * 这里只使用对象保存，而不是使用数组，是因为这里的运行设计是串行的
+       * 单个测试工具 下只会测试 单个url ，不同url 和不同工具不会相互影响
+       * 一个url 中止，interrupt 保存该url 的信息
+       * 下一个url 中止，上一个url 已经测完，不在需要 interrupt信息，所以interrupt 替换成另外一个url 的信息
+       */
+      interrupt: interrupt ? {
+        tool,
+        url
+      } : false
     };
   } catch (error) {
     onError?.(error);
@@ -77,8 +87,9 @@ export async function runPerformanceTasks(taskList, lifecycles = {}) {
             return async (preUrlTestResult = {})=>{
               const { interrupt = false } = preUrlTestResult;
 
-              // 如果上一个url已经终止，剩余的url不再测试
-              if (interrupt) {
+              // 如果 某url 测试工具下被终止，该测试工具则不再进行测试
+              if (interrupt?.tool === type && interrupt?.url === url) {
+                logger.info(`【中止】${type} 测试 ${url} ，第 ${index} 次`);
                 return preUrlTestResult;
               }
 
