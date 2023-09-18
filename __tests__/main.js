@@ -38,6 +38,8 @@ test("Test Main Entry", async () => {
     outputPath: _oupAbsolute,
   });
 
+  console.log(1)
+
   const lighthouseReportDir = getAbsolutePath(
     `${_oup}/**/${DEFAULT_LIGHTHOUSE_REPORT_DIR}/**/1.html`
   );
@@ -98,7 +100,6 @@ test("Test Main Entry Only Sitespeed", async () => {
 
 test("Test Main Entry With Hooks", async () => {
   const hookResult = {};
-  let doneResult = {}
 
   await PerformanceTest({
     urls: [url],
@@ -107,7 +108,6 @@ test("Test Main Entry With Hooks", async () => {
     sitespeed: false,
     onDone: ({result}) => {
       hookResult.onDone = true;
-      doneResult=result
     },
     onBegin: () => {
       hookResult.onBegin = true;
@@ -126,10 +126,45 @@ test("Test Main Entry With Hooks", async () => {
     onEnd: true,
     onAllDone: true,
   });
+});
+
+
+test("Test Main Entry With onDone Hooks", async () => {
+
+  let doneResult = {}
+
+  await PerformanceTest({
+    urls: [url],
+    iterations: 1,
+    outputPath: _oupAbsolute,
+    sitespeed: false,
+    onDone: ({result}) => {
+      doneResult=result
+    },
+  });
   expect(doneResult.LCP).toBeGreaterThanOrEqual(0)
   expect(doneResult.CLS).toBeGreaterThanOrEqual(0)
   expect(doneResult.FCP).toBeGreaterThanOrEqual(0)
-});
+})
+
+test("Test Main Entry With onAllDone Hooks", async () => {
+
+  let doneResult = {}
+
+  await PerformanceTest({
+    urls: [url],
+    iterations: 1,
+    outputPath: _oupAbsolute,
+    sitespeed: false,
+    onAllDone: (result) => {
+      doneResult=result
+    },
+  });
+
+  expect(doneResult?.[0]?.result?.[0].metrics?.LCP?.avg).toBeGreaterThanOrEqual(0)
+  expect(doneResult?.[0]?.result?.[0].metrics?.LCP?.p75).toBeGreaterThanOrEqual(0)
+  expect(doneResult?.[0]?.result?.[0].metrics?.LCP?.p90).toBeGreaterThanOrEqual(0)
+})
 
 test("Test Main Entry With Interrupt", async () => {
   await PerformanceTest({
@@ -139,8 +174,6 @@ test("Test Main Entry With Interrupt", async () => {
     sitespeed: false,
     onDone: ({index,result}) => {
       if(index===2){
-      console.log("result",result)
-
         return { interrupt: true}
       }
     },

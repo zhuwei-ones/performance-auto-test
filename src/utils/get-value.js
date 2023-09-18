@@ -14,6 +14,7 @@ import {
   COMPARE_METRICS_TYPE_MAP,
   CWD,
   METRICS_LIGHTHOUSE_MAP,
+  METRICS_MAP,
   METRICS_SECOND_UNIT,
   METRICS_SITESPEED_MAP,
   METRICS_STANDARD_MAP,
@@ -378,4 +379,34 @@ export function kbToMb(kb) {
     return kb + ' KB';
   }
   return mb + ' MB';
+}
+
+// [{"type":"lighthouse","result":{"localhost_8091__":{"url:"xxxx",metrics:{"LCP":0,"LCP_75":0}}}}]
+export function getAllDonePerformanceResult(finalResult) {
+  return finalResult.map(toolResult=>{
+    const result = Object.values(toolResult.result);
+    const metricsList = Object.values(METRICS_MAP);
+    const str75 = '_75';
+    const str90 = '_90';
+
+    return {
+      tool: toolResult.type,
+      result: result.map(urlResult=>{
+        const metricValues = urlResult.metircs;
+        return {
+          url: urlResult.url,
+          metrics: metricsList.reduce((pre, metricsKey)=>{
+            return {
+              ...pre,
+              [metricsKey]: {
+                avg: +metricValues[metricsKey],
+                p75: +metricValues[metricsKey + str75],
+                p90: +metricValues[metricsKey + str90]
+              }
+            };
+          }, {})
+        };
+      })
+    };
+  });
 }

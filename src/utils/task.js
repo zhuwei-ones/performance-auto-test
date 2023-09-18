@@ -3,7 +3,10 @@ import ProgressBar from 'progress';
 import { PERFORMANCE_TOOLS_LIST, PERFORMANCE_TOOLS_MAP } from '../const';
 import { runLighthouse } from '../lib/lighthouse';
 import { runSitespeed } from '../lib/sitespeed';
-import { getLighthouseWebVitals, getRunnerResultWebVitals, getSitespeedWebVitals } from './get-value';
+import {
+  getAllDonePerformanceResult, getLighthouseWebVitals,
+  getRunnerResultWebVitals, getSitespeedWebVitals
+} from './get-value';
 import { logger } from './log';
 
 const TASK_MAP = {
@@ -167,7 +170,7 @@ export async function runTasks(task, lifecycles = {}) {
 
   const finalResult = await getTaskResult(taskResultList);
 
-  onAllDone?.();
+  onAllDone?.(getAllDonePerformanceResult(finalResult));
 
   return finalResult;
 }
