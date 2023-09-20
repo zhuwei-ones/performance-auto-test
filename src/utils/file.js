@@ -24,7 +24,9 @@ export async function createLighthouseReport(options) {
     return false;
   });
 
-  const { saveAllJson, saveAssets, saveReport2Png } = lighthouseConfig;
+  const {
+    saveAllJson, saveAssets, saveReport2Png
+  } = lighthouseConfig;
   const { report: reportHtml, ...rest } = resultList;
   const {
     htmlFilePath, pngFilePath, allJsonFilePath, assetJsonFilePath

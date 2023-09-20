@@ -163,4 +163,23 @@ describe("Test Ligthhouse Entry",()=>{
     });
     expect(statSync(`${outputPath2}/${key}/1.all.json`).size).toBeGreaterThan(1000);
   })
+
+  // 纯净模式，不保存任何具体运行报告
+  test("lighthouse pure mode", async () => {
+    const outputPath2 = `${outputPath}/${DEFAULT_LIGHTHOUSE_REPORT_DIR}`;
+    await runLighthouse(url, {
+      outputPath: outputPath2,
+      urlKey: key,
+      urlIndex: 1,
+      lighthouseConfig: {
+        ...LIGHTHOUSE_DEFAULT_CONFIG,
+        pure:true
+      },
+      lighthouseOptions: LIGHTHOUSE_DEFAULT_OPTIONS
+    });
+
+    expect(existsSync(`${outputPath2}/${key}/1.html`)).toBe(false);
+    expect(existsSync(`${outputPath2}/${key}/1.png`)).toBe(false);
+
+  })
 })
