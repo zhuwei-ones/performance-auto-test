@@ -14,7 +14,7 @@ import {
 } from "../src/const";
 import useServer from '../example/server'
 
-import { existsSync, removeSync, statSync } from "fs-extra";
+import { emptyDirSync, existsSync, removeSync, statSync } from "fs-extra";
 
 const url = "http://localhost:8091";
 const key = getKeypathFromUrl(url);
@@ -36,6 +36,7 @@ afterAll(() => {
 
 beforeEach(()=>{
   removeSync(outputPathParent);
+  emptyDirSync(outputPath)
 })
 
 test("Test Sitespeed Entry", async () => {
@@ -102,7 +103,6 @@ describe("Test Ligthhouse Entry",()=>{
       lighthouseConfig: {
         ...LIGHTHOUSE_DEFAULT_CONFIG,
         saveAllJson: true,
-        saveAssets: true
       },
       lighthouseOptions: LIGHTHOUSE_DEFAULT_OPTIONS
     });

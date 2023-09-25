@@ -77,6 +77,7 @@ describe("get options", () => {
           saveAssets: false,
           saveAllJson: false,
           saveReport2Png: false,
+          pure: false,
         },
         lighthouseOptions: {
           onlyCategories: ["performance"],
@@ -162,8 +163,8 @@ describe("get options", () => {
       sitespeed: true,
     });
 
-    console.log("result",result);
-    console.log("expectResult",expectResult);
+    // console.log("result",result);
+    // console.log("expectResult",expectResult);
 
     delete result.testTime;
     expect(result).toEqual(expectResult);
