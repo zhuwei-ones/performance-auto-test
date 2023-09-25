@@ -27,6 +27,10 @@ export async function runLighthouse(url, options) {
     outputPath, urlKey, urlIndex, lighthouseConfig, lighthouseOptions, metricsConfig
   } = options;
 
+  const {
+    pure
+  } = lighthouseConfig;
+
   let runnerResult = await launchChromeAndRunLighthouse(
     url,
     lighthouseOptions,
@@ -35,15 +39,18 @@ export async function runLighthouse(url, options) {
 
   const audits = runnerResult.lhr.audits;
 
-  await createLighthouseReport({
-    url: url,
-    urlKey: urlKey,
-    index: urlIndex,
-    outputPath,
-    resultList: runnerResult,
-    lighthouseConfig,
-    metricsConfig
-  });
+  // 纯净模式，不保存每次测试的具体报告
+  if (!pure) {
+    await createLighthouseReport({
+      url: url,
+      urlKey: urlKey,
+      index: urlIndex,
+      outputPath,
+      resultList: runnerResult,
+      lighthouseConfig,
+      metricsConfig
+    });
+  }
 
   runnerResult = null;
 

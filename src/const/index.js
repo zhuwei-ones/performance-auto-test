@@ -173,8 +173,8 @@ export const LIGHTHOUSE_DEFAULT_CONFIG = {
   },
   saveAssets: false,
   saveAllJson: false,
-  saveReport2Png: false
-
+  saveReport2Png: false,
+  pure: false // 纯净模式，不保存任何具体报告文件
 };
 
 export const SITESPEED_DEFAULT_CONFIG = {

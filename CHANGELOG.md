@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.0-alpha.3](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.4.0-alpha.2...v1.4.0-alpha.3) (2023-09-18)
+
+
+### Features
+
+* 测试中止区分 url 和 工具 ([4daadff](https://github.com/zhuwei-ones/performance-auto-test/commit/4daadff6095c262750e6c5b37eafe40a023df067))
+* allDone hook 传入全部测试结果 ([a49f44e](https://github.com/zhuwei-ones/performance-auto-test/commit/a49f44e6dc9301b1b0d755fe06e1f65f95da7104))
+
 ## [1.4.0-alpha.2](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.4.0-alpha.1...v1.4.0-alpha.2) (2023-09-11)
 
 

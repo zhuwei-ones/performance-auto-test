@@ -9,7 +9,8 @@ import {
 } from "../src/const";
 import { glob } from "glob";
 
-const url = "http://localhost:8091";
+const url1 = "http://localhost:8091";
+const url2 = "http://localhost:8091/2.html";
 const _oup = "test-output";
 const _oupAbsolute = getAbsolutePath(_oup);
 jest.setTimeout(100000);
@@ -33,10 +34,12 @@ beforeEach(() => {
 
 test("Test Main Entry", async () => {
   await PerformanceTest({
-    urls: [url],
+    urls: [url1],
     iterations: 1,
     outputPath: _oupAbsolute,
   });
+
+  console.log(1)
 
   const lighthouseReportDir = getAbsolutePath(
     `${_oup}/**/${DEFAULT_LIGHTHOUSE_REPORT_DIR}/**/1.html`
@@ -54,7 +57,7 @@ test("Test Main Entry", async () => {
 
 test("Test Main Entry Only Performance", async () => {
   await PerformanceTest({
-    urls: [url],
+    urls: [url1],
     iterations: 1,
     outputPath: _oupAbsolute,
     sitespeed: false,
@@ -76,7 +79,7 @@ test("Test Main Entry Only Performance", async () => {
 
 test("Test Main Entry Only Sitespeed", async () => {
   await PerformanceTest({
-    urls: [url],
+    urls: [url1],
     iterations: 1,
     outputPath: _oupAbsolute,
     lighthouse: false,
@@ -98,16 +101,14 @@ test("Test Main Entry Only Sitespeed", async () => {
 
 test("Test Main Entry With Hooks", async () => {
   const hookResult = {};
-  let doneResult = {}
 
   await PerformanceTest({
-    urls: [url],
+    urls: [url1],
     iterations: 1,
     outputPath: _oupAbsolute,
     sitespeed: false,
     onDone: ({result}) => {
       hookResult.onDone = true;
-      doneResult=result
     },
     onBegin: () => {
       hookResult.onBegin = true;
@@ -126,21 +127,56 @@ test("Test Main Entry With Hooks", async () => {
     onEnd: true,
     onAllDone: true,
   });
+});
+
+
+test("Test Main Entry With onDone Hooks", async () => {
+
+  let doneResult = {}
+
+  await PerformanceTest({
+    urls: [url1],
+    iterations: 1,
+    outputPath: _oupAbsolute,
+    sitespeed: false,
+    onDone: ({result}) => {
+      doneResult=result
+    },
+  });
   expect(doneResult.LCP).toBeGreaterThanOrEqual(0)
   expect(doneResult.CLS).toBeGreaterThanOrEqual(0)
   expect(doneResult.FCP).toBeGreaterThanOrEqual(0)
-});
+})
+
+test("Test Main Entry With onAllDone Hooks", async () => {
+
+  let doneResult = {}
+
+  await PerformanceTest({
+    urls: [url1],
+    iterations: 1,
+    outputPath: _oupAbsolute,
+    sitespeed: false,
+    onAllDone: (result) => {
+      doneResult=result
+    },
+  });
+
+  expect(doneResult?.[0]?.result?.[0].metrics?.LCP?.avg).toBeGreaterThanOrEqual(0)
+  expect(doneResult?.[0]?.result?.[0].metrics?.LCP?.p75).toBeGreaterThanOrEqual(0)
+  expect(doneResult?.[0]?.result?.[0].metrics?.LCP?.p90).toBeGreaterThanOrEqual(0)
+})
 
 test("Test Main Entry With Interrupt", async () => {
   await PerformanceTest({
-    urls: [url],
+    urls: [url1,url2],
     iterations: 4,
     outputPath: _oupAbsolute,
     sitespeed: false,
-    onDone: ({index,result}) => {
-      if(index===2){
-      console.log("result",result)
+    onDone: ({index,url}) => {
 
+      // url1 中止，其他url正常运行
+      if(index===2 && url===url1){
         return { interrupt: true}
       }
     },
@@ -150,5 +186,5 @@ test("Test Main Entry With Interrupt", async () => {
 
   const lChildDir = glob.sync(lighthouseReportDir)
 
-  expect(lChildDir.length).toEqual(2);
+  expect(lChildDir.length).toEqual(6);
 });
