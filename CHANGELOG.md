@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.0-alpha.6](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.4.0-alpha.4...v1.4.0-alpha.6) (2023-09-25)
+
+
+### Bug Fixes
+
+* 去掉强制关闭线程的代码，找到了卡主的原因 ([7e2d550](https://github.com/zhuwei-ones/performance-auto-test/commit/7e2d550a2598102de9a35e8bf4e05a89a834d0cb))
+* 值等于标准也算通过 ([44a1e68](https://github.com/zhuwei-ones/performance-auto-test/commit/44a1e683e2b9a6b875007de30955b289db07b973))
+* trace json 路径错误 ([43cb117](https://github.com/zhuwei-ones/performance-auto-test/commit/43cb1171c8bf7be1d984afde75ca4e094abc2e50))
+
 ## [1.4.0-alpha.5](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.4.0-alpha.4...v1.4.0-alpha.5) (2023-09-22)
 
 
