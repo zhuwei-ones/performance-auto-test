@@ -11,18 +11,19 @@ export async function createLighthouseReport(options) {
   } = options;
 
   const audits = resultList.lhr.audits;
-  const goodMetrics = metricsConfig.good;
+  const goodMetrics = metricsConfig?.good;
 
   // 判断这次报告是否通过，不过不通过则保存详情json数据
-  const isSaveUnAprroveReport = getCurrentMetricsStandard(goodMetrics).some(metricsName=>{
-    const keyName = METRICS_LIGHTHOUSE_MAP[metricsName];
-    let value = audits[keyName]?.numericValue;
-    const standardValue = goodMetrics[metricsName.toLocaleLowerCase()];
-    if (value && standardValue) {
-      return +value.toFixed(3) > standardValue;
-    }
-    return false;
-  });
+  const isSaveUnAprroveReport = !goodMetrics ? false
+    : getCurrentMetricsStandard(goodMetrics).some(metricsName=>{
+      const keyName = METRICS_LIGHTHOUSE_MAP[metricsName];
+      let value = audits[keyName]?.numericValue;
+      const standardValue = goodMetrics[metricsName.toLocaleLowerCase()];
+      if (value && standardValue) {
+        return +value.toFixed(3) > standardValue;
+      }
+      return false;
+    });
 
   const {
     saveAllJson, saveAssets, saveReport2Png
