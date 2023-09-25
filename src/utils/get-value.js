@@ -35,7 +35,7 @@ export function getValueRange(value, bestValue, worstValue) {
   ) {
     return '';
   }
-  if (value < bestValue) {
+  if (value <= bestValue) {
     return 'good';
   }
   if (value > worstValue) {
