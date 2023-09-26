@@ -65,7 +65,7 @@ export async function getLineChartSvgContent({
   };
 
   // 在 SSR 模式下第一个参数不需要再传入 DOM 对象
-  const chart = echarts.init(null, null, {
+  const chart = await echarts.init(null, null, {
     renderer: 'svg', // 必须使用 SVG 模式
     ssr: true, // 开启 SSR
     width: 1920, // 需要指明高和宽
@@ -74,7 +74,7 @@ export async function getLineChartSvgContent({
   });
 
   // 像正常使用一样 setOption
-  chart.setOption(options);
+  await chart.setOption(options);
 
   // 输出字符串
   const svgStr = chart.renderToSVGString();
