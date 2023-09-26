@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.0-alpha.7](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.4.0-alpha.6...v1.4.0-alpha.7) (2023-09-26)
+
+
+### Bug Fixes
+
+* svg content empty ([6ce4531](https://github.com/zhuwei-ones/performance-auto-test/commit/6ce453132ef08951c6cc88ff1f26406f8f12e023))
+
 ## [1.4.0-alpha.6](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.4.0-alpha.4...v1.4.0-alpha.6) (2023-09-25)
 
 

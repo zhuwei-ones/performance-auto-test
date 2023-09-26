@@ -303,28 +303,28 @@ export const createPerformanceReport = async (
   json.push({ h3: '指标标准' });
   json.push(getMetricsStandardDataTable(metricsConfig));
 
-  // json.push({ h3: '性能测试工具结果对比报告' });
-  // json.push(
-  //   getToolCompareTableData({
-  //     performanceResultList: performanceResultMap,
-  //     metricsConfig
-  //   })
-  // );
+  json.push({ h3: '性能测试工具结果对比报告' });
+  json.push(
+    getToolCompareTableData({
+      performanceResultList: performanceResultMap,
+      metricsConfig
+    })
+  );
 
   await Promise.all(
     performanceResultList.map(async (item) => {
       const { type, result } = item;
       const getToolReportLinkFunc = TOOL_REPORT_LINK_FUNC_MAP[type];
 
-      // json.push({ h3: `${type} 具体报告` });
-      // json.push(
-      //   getToolReportLinkFunc({
-      //     toolOutputPath: options[`${type}Options`].outputPath,
-      //     outputPath,
-      //     result,
-      //     options: options[`${type}Options`]
-      //   })
-      // );
+      json.push({ h3: `${type} 具体报告` });
+      json.push(
+        getToolReportLinkFunc({
+          toolOutputPath: options[`${type}Options`].outputPath,
+          outputPath,
+          result,
+          options: options[`${type}Options`]
+        })
+      );
 
       const svgList = getCurrentMetricsStandard(metricsConfig.good).map((key) => {
         return getToolCompareChartImg({

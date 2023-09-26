@@ -74,10 +74,7 @@ export async function getLineChartSvgContent({
   });
 
   // 像正常使用一样 setOption
-  // 这么写的原因是为了避免 Jest 报错，说 chart.setOption 是 open handle，但是其实他不是
-  await Promise.all([async ()=>{
-    chart.setOption(options);
-  }]);
+  chart.setOption(options);
 
   // 输出字符串
   const svgStr = chart.renderToSVGString();
