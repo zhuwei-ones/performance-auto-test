@@ -221,119 +221,118 @@ describe("Test Report util", () => {
 describe("Test Report doc", () => {
 
 
-  // test("Test MD DOC", async () => {
+  test("Test MD DOC", async () => {
 
-  //   const reportPath = await  createPerformanceReport(
-  //     [
-  //       {
-  //         type: "lighthouse",
-  //         result: {
-  //           baidu_com__: {
-  //             metircs: {
-  //               CLS: 0,
-  //               FCP: 980,
-  //               FID: 0,
-  //               LCP: 1315,
-  //               TBT: 3,
-  //               TTFB: 722,
-  //               TTI: 0,
-  //             },
-  //             url: "http://baidu.com",
-  //           },
-  //         },
-  //       },
-  //     ],
-  //     {
-  //       outputPath: outputPathParent,
-  //       testTime: new Date(),
-  //       testTools: ["lighthouse"],
-  //       reportType: "md",
-  //       setting: {
-  //         userAgent: "xxxx",
-  //       },
-  //       iterations: 3,
-  //       lighthouseOptions: {
-  //         outputPath: "output/lighthouse",
-  //       },
-  //       metricsConfig: {
-  //         good: {
-  //           lcp: METRICS_CONFIG.GOOD.LCP,
-  //           cls: METRICS_CONFIG.GOOD.CLS,
-  //           fid: METRICS_CONFIG.GOOD.FID,
-  //         },
-  //         bad: {
-  //           lcp: METRICS_CONFIG.BAD.LCP,
-  //           cls: METRICS_CONFIG.BAD.CLS,
-  //           fid: METRICS_CONFIG.BAD.FID,
-  //         },
-  //       },
-  //       compareMetricsType:"avg"
-  //     }
-  //   );
+    const reportPath = await  createPerformanceReport(
+      [
+        {
+          type: "lighthouse",
+          result: {
+            baidu_com__: {
+              metircs: {
+                CLS: 0,
+                FCP: 980,
+                FID: 0,
+                LCP: 1315,
+                TBT: 3,
+                TTFB: 722,
+                TTI: 0,
+              },
+              url: "http://baidu.com",
+            },
+          },
+        },
+      ],
+      {
+        outputPath: outputPathParent,
+        testTime: new Date(),
+        testTools: ["lighthouse"],
+        reportType: "md",
+        setting: {
+          userAgent: "xxxx",
+        },
+        iterations: 3,
+        lighthouseOptions: {
+          outputPath: "output/lighthouse",
+        },
+        metricsConfig: {
+          good: {
+            lcp: METRICS_CONFIG.GOOD.LCP,
+            cls: METRICS_CONFIG.GOOD.CLS,
+            fid: METRICS_CONFIG.GOOD.FID,
+          },
+          bad: {
+            lcp: METRICS_CONFIG.BAD.LCP,
+            cls: METRICS_CONFIG.BAD.CLS,
+            fid: METRICS_CONFIG.BAD.FID,
+          },
+        },
+        compareMetricsType:"avg"
+      }
+    );
 
-  //   expect(reportPath).toEqual(`${outputPathParent}/report.md`);
+    expect(reportPath).toEqual(`${outputPathParent}/report.md`);
 
-  //   expect(statSync(`${outputPathParent}/report.md`).size).toBeGreaterThan(
-  //     1000
-  //   );
+    expect(statSync(`${outputPathParent}/report.md`).size).toBeGreaterThan(
+      1000
+    );
 
-  // })
+  })
 
-  // test("Test Default Doc", async () => {
-  //   const reportPath = await createPerformanceReport(
-  //     [
-  //       {
-  //         type: "lighthouse",
-  //         result: {
-  //           baidu_com__: {
-  //             metircs: {
-  //               CLS: 0,
-  //               FCP: 980,
-  //               FID: 0,
-  //               LCP: 1315,
-  //               TBT: 3,
-  //               TTFB: 722,
-  //               TTI: 0,
-  //             },
-  //             url: "http://baidu.com",
-  //           },
-  //         },
-  //       },
-  //     ],
-  //     {
-  //       outputPath: outputPathParent,
-  //       testTime: new Date(),
-  //       testTools: ["lighthouse"],
-  //       setting: {
-  //         userAgent: "xxxx",
-  //       },
-  //       iterations: 3,
-  //       lighthouseOptions: {
-  //         outputPath: "output/lighthouse",
-  //       },
-  //       metricsConfig: {
-  //         good: {
-  //           lcp: METRICS_CONFIG.GOOD.LCP,
-  //           cls: METRICS_CONFIG.GOOD.CLS,
-  //           fid: METRICS_CONFIG.GOOD.FID,
-  //         },
-  //         bad: {
-  //           lcp: METRICS_CONFIG.BAD.LCP,
-  //           cls: METRICS_CONFIG.BAD.CLS,
-  //           fid: METRICS_CONFIG.BAD.FID,
-  //         },
-  //       },
-  //       compareMetricsType:"avg"
-  //     }
-  //   );
+  test("Test Default Doc", async () => {
+    const reportPath = await createPerformanceReport(
+      [
+        {
+          type: "lighthouse",
+          result: {
+            baidu_com__: {
+              metircs: {
+                CLS: 0,
+                FCP: 980,
+                FID: 0,
+                LCP: 1315,
+                TBT: 3,
+                TTFB: 722,
+                TTI: 0,
+              },
+              url: "http://baidu.com",
+            },
+          },
+        },
+      ],
+      {
+        outputPath: outputPathParent,
+        testTime: new Date(),
+        testTools: ["lighthouse"],
+        setting: {
+          userAgent: "xxxx",
+        },
+        iterations: 3,
+        lighthouseOptions: {
+          outputPath: "output/lighthouse",
+        },
+        metricsConfig: {
+          good: {
+            lcp: METRICS_CONFIG.GOOD.LCP,
+            cls: METRICS_CONFIG.GOOD.CLS,
+            fid: METRICS_CONFIG.GOOD.FID,
+          },
+          bad: {
+            lcp: METRICS_CONFIG.BAD.LCP,
+            cls: METRICS_CONFIG.BAD.CLS,
+            fid: METRICS_CONFIG.BAD.FID,
+          },
+        },
+        compareMetricsType:"avg"
+      }
+    );
 
-  //   expect(reportPath).toEqual(`${outputPathParent}/report.html`);
+    expect(reportPath).toEqual(`${outputPathParent}/report.html`);
 
-  //   expect(statSync(`${outputPathParent}/report.html`).size).toBeGreaterThan(
-  //     1000
-  //   );
-  // });
-
+    expect(statSync(`${outputPathParent}/report.html`).size).toBeGreaterThan(
+      1000
+    );
+  });
 
   test("Test Rerpont Png", async () => {
 

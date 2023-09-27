@@ -4,7 +4,7 @@
   "description": "网站性能自动化测试，一键输出多工具性能报告",
   "main": "dist/index.js",
   "scripts": {
-    "test": "jest --detectOpenHandles --forceExit",
+    "test": "jest --verbose --detectOpenHandles",
     "coverage": " jest --coverage",
     "clean": "rimraf dist && echo 'clean dist ok'",
     "build": "babel src --out-dir dist",

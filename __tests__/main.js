@@ -39,8 +39,6 @@ test("Test Main Entry", async () => {
     outputPath: _oupAbsolute,
   });
 
-  console.log(1)
-
   const lighthouseReportDir = getAbsolutePath(
     `${_oup}/**/${DEFAULT_LIGHTHOUSE_REPORT_DIR}/**/1.html`
   );
