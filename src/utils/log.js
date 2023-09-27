@@ -31,6 +31,8 @@ const myFormat = (type)=>{
   });
 };
 
+const isTest = process.env.NODE_ENV === 'test';
+
 export const logger = createLogger({
   levels: {
     error: 0,
@@ -41,16 +43,19 @@ export const logger = createLogger({
   transports: [
     // (info)=>myFormat({ ...info, type: 'console' })
     new transports.Console({
-      format: combine(label({ label: PkgJson.name }), timestamp(), format.prettyPrint(), myFormat('console'))
+      format: combine(label({ label: PkgJson.name }), timestamp(), format.prettyPrint(), myFormat('console')),
+      silent: isTest
     }),
     new transports.File({
       filename: 'logs/performance-error.log',
       level: 'error',
-      format: combine(label({ label: PkgJson.name }), timestamp(), format.prettyPrint(), myFormat('file'))
+      format: combine(label({ label: PkgJson.name }), timestamp(), format.prettyPrint(), myFormat('file')),
+      silent: isTest
     }),
     new transports.File({
       filename: 'logs/performance-log.log',
-      format: combine(label({ label: PkgJson.name }), timestamp(), format.prettyPrint(), myFormat('file'))
+      format: combine(label({ label: PkgJson.name }), timestamp(), format.prettyPrint(), myFormat('file')),
+      silent: isTest
     })
   ]
 });

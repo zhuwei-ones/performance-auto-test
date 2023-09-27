@@ -79,6 +79,9 @@ export async function getLineChartSvgContent({
   // 输出字符串
   const svgStr = chart.renderToSVGString();
 
+  // 清除实例，否则 setOption 内部会持续占用线程，无法退出
+  chart.dispose();
+
   return svgStr;
 }
 
