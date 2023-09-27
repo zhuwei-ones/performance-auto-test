@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.0-alpha.9](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.4.0-alpha.8...v1.4.0-alpha.9) (2023-09-27)
+
+
+### Bug Fixes
+
+* echart setOptions 会一直占用线程，需要手动销毁 ([2755eb8](https://github.com/zhuwei-ones/performance-auto-test/commit/2755eb8300784dd46514f239ab64a4f1d589e780))
+
 ## [1.4.0-alpha.8](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.4.0-alpha.7...v1.4.0-alpha.8) (2023-09-26)
 
 ## [1.4.0-alpha.7](https://github.com/zhuwei-ones/performance-auto-test/compare/v1.4.0-alpha.6...v1.4.0-alpha.7) (2023-09-26)
